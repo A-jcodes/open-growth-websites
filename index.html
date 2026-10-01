@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open Growth Designs</title>
+  <style>
+    :root { --bg: #f6f4ef; --fg: #161616; --muted: #5d5a54; --card: #ffffff; --line: #dedad2; --accent: #1f6f4a; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #121212; --fg: #f2f0eb; --muted: #a8a49c; --card: #1c1c1c; --line: #2e2e2e; --accent: #6fd3a2; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 760px; margin: 0 auto; padding: 64px 16px; }
+    h1 { font-size: 2rem; margin: 0 0 8px; }
+    p { color: var(--muted); margin: 0 0 32px; }
+    ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+    a { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; color: inherit; text-decoration: none; }
+    a:hover { border-color: var(--accent); }
+    a span { color: var(--muted); font-size: .9rem; }
+    strong::after { content: " →"; color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Open Growth website designs</h1>
+    <p>Four design directions for websites that bring Calgary businesses more calls and bookings.</p>
+    <ul>
+      <li><a href="sitesmith/"><strong>Sitesmith</strong><span>Bold and playful</span></a></li>
+      <li><a href="v3-framer/"><strong>Framer</strong><span>Framer-style dark</span></a></li>
+      <li><a href="v2-agent-dark-3d/"><strong>Dark 3D</strong><span>Dark, 3D</span></a></li>
+      <li><a href="v1-claude-editorial/"><strong>Editorial</strong><span>Clean editorial</span></a></li>
+    </ul>
+  </main>
+</body>
+</html>
