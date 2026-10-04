@@ -81,6 +81,9 @@
     if (siteHeader) siteHeader.classList.add('menu-open');
     if (lenis) lenis.stop();
     doc.addEventListener('keydown', onMenuKey);
+    $$('main, footer, .mobile-cta').forEach(function (el) { el.setAttribute('inert', ''); });
+    var firstLink = mobileMenu.querySelector('a');
+    if (firstLink) firstLink.focus();
   }
   function closeMenu() {
     if (!mobileMenu || !menuToggle || mobileMenu.hidden) return;
@@ -91,6 +94,9 @@
     if (siteHeader) siteHeader.classList.remove('menu-open');
     if (lenis) lenis.start();
     doc.removeEventListener('keydown', onMenuKey);
+    $$('main, footer').forEach(function (el) { el.removeAttribute('inert'); });
+    var cta = $('.mobile-cta');
+    if (cta && cta.classList.contains('is-visible')) cta.removeAttribute('inert');
   }
   function initMenu() {
     if (!menuToggle || !mobileMenu) return;
@@ -141,7 +147,9 @@
       if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? clamp(y / max, 0, 1) : 0) + ')';
       if (mcta) {
         var threshold = hero ? hero.offsetHeight * 0.6 : 400;
-        mcta.classList.toggle('is-visible', y > threshold && !auditVisible);
+        var show = y > threshold && !auditVisible && !(mobileMenu && !mobileMenu.hidden);
+        mcta.classList.toggle('is-visible', show);
+        if (show) mcta.removeAttribute('inert'); else mcta.setAttribute('inert', '');
       }
     }
     function requestUpdate() {
@@ -170,8 +178,9 @@
         var link = map[en.target.id];
         if (!link) return;
         if (en.isIntersecting) {
-          links.forEach(function (l) { l.classList.remove('is-current'); });
+          links.forEach(function (l) { l.classList.remove('is-current'); l.removeAttribute('aria-current'); });
           link.classList.add('is-current');
+          link.setAttribute('aria-current', 'true');
         }
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
@@ -378,7 +387,7 @@
       render();
     }
     function start() {
-      if (running || prefersReduced) return;
+      if (running || prefersReduced || motionPaused()) return;
       running = true;
       last = performance.now();
       rafId = requestAnimationFrame(frame);
@@ -410,6 +419,9 @@
     }
     doc.addEventListener('visibilitychange', function () {
       if (doc.hidden) stop(); else if (inView) start();
+    });
+    doc.addEventListener('og-motion', function () {
+      if (motionPaused()) stop(); else if (inView && !doc.hidden) start();
     });
     start();
   }
@@ -455,8 +467,11 @@
       .from('.float-card', { y: 50, opacity: 0, scale: 0.94, duration: 1.3, stagger: 0.14 }, 0.7);
 
     // Gentle float after the intro settles
-    $$('.float-card').forEach(function (card, i) {
-      gsap.to(card, { y: i % 2 ? 10 : -12, duration: 3 + i * 0.6, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.4 });
+    var floats = $$('.float-card').map(function (card, i) {
+      return gsap.to(card, { y: i % 2 ? 10 : -12, duration: 3 + i * 0.6, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.4, paused: motionPaused() });
+    });
+    doc.addEventListener('og-motion', function () {
+      floats.forEach(function (t) { if (motionPaused()) t.pause(); else t.resume(); });
     });
   }
 
@@ -482,6 +497,7 @@
     var s = 0;
     var hold = 0;
     setInterval(function () {
+      if (motionPaused()) return;
       if (s < 42) {
         s++;
       } else if (hold < 45) {
@@ -977,6 +993,21 @@
   }
 
   /* ---------------- Misc ---------------- */
+  function motionPaused() { return root.classList.contains('motion-paused'); }
+  function initMotionToggle() {
+    var btn = $('.motion-toggle');
+    var saved = false;
+    try { saved = window.localStorage.getItem('og-motion-paused') === '1'; } catch (e) { /* storage blocked */ }
+    function set(paused) {
+      root.classList.toggle('motion-paused', paused);
+      if (btn) btn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+      try { window.localStorage.setItem('og-motion-paused', paused ? '1' : '0'); } catch (e) { /* storage blocked */ }
+      doc.dispatchEvent(new Event('og-motion'));
+    }
+    set(saved);
+    if (btn) btn.addEventListener('click', function () { set(btn.getAttribute('aria-pressed') !== 'true'); });
+  }
+
   function initYear() {
     var y = doc.getElementById('year');
     if (y) y.textContent = String(new Date().getFullYear());
@@ -985,6 +1016,7 @@
   /* ---------------- Boot ---------------- */
   safe(initIcons, 'icons');
   safe(initYear, 'year');
+  safe(initMotionToggle, 'motion toggle');
   safe(initLenis, 'smooth scroll');
   safe(initMenu, 'menu');
   safe(initAnchors, 'anchors');

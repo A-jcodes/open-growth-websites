@@ -191,6 +191,11 @@
         <span>Websites</span><span class="m-dot"></span><span>Local SEO</span><span class="m-dot"></span><span>Google Business Profile</span><span class="m-dot"></span><span>60-second follow-up</span><span class="m-dot"></span><span>Power BI dashboards</span><span class="m-dot"></span><span>AI search</span><span class="m-dot"></span>
       </div>
     </div>
+    <div class="container motion-ctrl">
+      <button class="motion-toggle" type="button" aria-pressed="false">
+        <span class="motion-toggle__icon" aria-hidden="true"></span> Pause animations
+      </button>
+    </div>
 
     <!-- ============ HOW IT WORKS ============ -->
     <section class="section" id="how" aria-labelledby="how-title">
@@ -457,7 +462,7 @@
               <li><i data-lucide="check" aria-hidden="true"></i> We track your before-and-after figures (calls, form fills, bookings, map ranking) and publish them as a case study.</li>
               <li><i data-lucide="check" aria-hidden="true"></i> If you're happy with the work, you leave us an honest Google review.</li>
             </ul>
-            <div class="seats" aria-label="Five founding client spots">
+            <div class="seats" role="img" aria-label="5 of 5 founding client spots open">
               <span class="seat"><em>1</em></span>
               <span class="seat"><em>2</em></span>
               <span class="seat"><em>3</em></span>
@@ -477,10 +482,8 @@
               <div><dt>Client</dt><dd>Founding client #1 (could be you)</dd></div>
               <div><dt>Problem</dt><dd>What was costing them calls, in one sentence</dd></div>
               <div><dt>What we built</dt><dd>Site, Google profile, follow-up automation, dashboard</dd></div>
-              <div class="case-nums">
-                <div><dt>Before</dt><dd class="num-pending">Measured at kickoff</dd></div>
-                <div><dt>After</dt><dd class="num-pending">Measured at 90 days</dd></div>
-              </div>
+              <div class="case-num"><dt>Before</dt><dd class="num-pending">Measured at kickoff</dd></div>
+              <div class="case-num"><dt>After</dt><dd class="num-pending">Measured at 90 days</dd></div>
               <div><dt>Timeframe</dt><dd>90 days from launch</dd></div>
             </dl>
             <p class="small-note">Every case study we publish will follow this format, with numbers from the client's live dashboard.</p>
@@ -932,9 +935,9 @@
   </footer>
 
   <!-- Mobile sticky CTA -->
-  <div class="mobile-cta" aria-hidden="true">
-    <a class="btn btn-ghost" href="tel:+14035550142" tabindex="-1"><i data-lucide="phone" aria-hidden="true"></i> Call</a>
-    <a class="btn btn-primary" href="#audit" tabindex="-1">Free audit <i data-lucide="arrow-right" aria-hidden="true"></i></a>
+  <div class="mobile-cta" inert>
+    <a class="btn btn-ghost" href="tel:+14035550142" aria-label="Call (403) 555-0142"><i data-lucide="phone" aria-hidden="true"></i> Call</a>
+    <a class="btn btn-primary" href="#audit">Free audit <i data-lucide="arrow-right" aria-hidden="true"></i></a>
   </div>
 
   <!-- Libraries (pinned versions). The site works without them; they only add motion and polish. -->

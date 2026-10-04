@@ -1,14 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-CA">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Open Growth | Websites that bring Calgary businesses more calls</title>
 <meta name="description" content="Websites, local search and lead follow-up for Calgary businesses, with published prices, month-to-month terms and a live dashboard of every call and booking. Start with a free website audit." />
 <meta name="theme-color" content="#090909" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23fff'/%3E%3Cpath d='M8 21.5l6-6 4 3 6.5-8' fill='none' stroke='%23090909' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script>document.documentElement.classList.add('js');</script>
 <style>
 /* ============================================================
    Tokens: Framer DESIGN.md (canvas, surfaces, hairlines, one accent)
@@ -23,6 +25,7 @@
   --ink: #ffffff;
   --muted: #999999;
   --blue: #0099ff;
+  --blue-strong: #0077d6; /* blue for fills behind white text (4.5:1) */
   --green: #22c55e;
   --g-magenta: #d44df0;
   --g-violet: #6a4cf5;
@@ -39,19 +42,22 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 88px; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; scroll-padding-top: 88px; -webkit-text-size-adjust: 100%; overflow-x: clip; }
 body {
   margin: 0; background: var(--canvas); color: var(--ink);
-  font-family: var(--body); font-size: 15px; line-height: 1.3; letter-spacing: -0.01em;
+  font-family: var(--body); font-size: 16px; line-height: 1.5; letter-spacing: -0.01em;
   font-feature-settings: "cv11", "ss01", "ss03";
   -webkit-font-smoothing: antialiased; overflow-x: hidden;
 }
 img, svg { display: block; }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; color: inherit; }
-::selection { background: var(--blue); color: #fff; }
+::selection { background: var(--blue-strong); color: #fff; }
+a, button, label, summary, input, select, textarea { touch-action: manipulation; }
+.skip-link { position: fixed; left: 16px; top: -80px; z-index: 100; padding: 12px 18px; border-radius: var(--r-pill); background: #fff; color: #000; font-weight: 600; transition: top .2s; }
+.skip-link:focus { top: 12px; }
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .icon { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
@@ -69,7 +75,7 @@ section { padding: var(--sp-section) 0; }
 .eyebrow { font-size: 13px; font-weight: 500; color: var(--muted); margin: 0 0 20px; display: flex; align-items: center; gap: 8px; }
 .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
 .muted { color: var(--muted); }
-.micro { font-size: 12px; color: var(--muted); }
+.micro { font-size: 13px; color: var(--muted); }
 .section-head { max-width: 760px; margin-bottom: 56px; }
 .section-head .body-lg { margin-top: 20px; max-width: 580px; }
 .head-row { display: flex; justify-content: space-between; align-items: end; gap: 40px; margin-bottom: 56px; }
@@ -79,7 +85,7 @@ section { padding: var(--sp-section) 0; }
 /* ---------- Buttons ---------- */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 40px; padding: 0 18px; border-radius: var(--r-pill); border: 0; cursor: pointer;
+  height: 44px; padding: 0 18px; border-radius: var(--r-pill); border: 0; cursor: pointer;
   font-size: 14px; font-weight: 500; letter-spacing: -0.01em; white-space: nowrap;
   transition: transform .25s var(--ease), background .2s, opacity .2s, box-shadow .2s;
 }
@@ -93,7 +99,7 @@ section { padding: var(--sp-section) 0; }
 .btn-translucent:hover { background: rgba(255,255,255,.16); }
 .btn .icon { transition: transform .25s var(--ease); }
 .btn:hover .icon-arrow { transform: translateX(3px); }
-.btn-circle { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+.btn-circle { width: 44px; height: 44px; padding: 0; border-radius: 50%; }
 
 /* ---------- Nav ---------- */
 .nav {
@@ -102,13 +108,14 @@ section { padding: var(--sp-section) 0; }
 }
 .nav.scrolled { background: rgba(9,9,9,.72); backdrop-filter: saturate(160%) blur(16px); -webkit-backdrop-filter: saturate(160%) blur(16px); box-shadow: 0 1px 0 var(--line-soft); }
 .nav-inner { display: flex; align-items: center; gap: 28px; height: 44px; }
-.logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; letter-spacing: -0.03em; }
+.logo { display: inline-flex; align-items: center; min-height: 44px; gap: 10px; font-weight: 600; font-size: 16px; letter-spacing: -0.03em; }
 .logo svg { width: 26px; height: 26px; }
 .nav-links { display: flex; gap: 4px; margin-right: auto; }
-.nav-links a { font-size: 14px; font-weight: 500; color: var(--muted); padding: 8px 12px; border-radius: var(--r-pill); transition: color .2s, background .2s; }
+.nav-links a { display: flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 500; color: var(--muted); padding: 0 12px; border-radius: var(--r-pill); transition: color .2s, background .2s; }
 .nav-links a:hover { color: var(--ink); background: rgba(255,255,255,.06); }
-.nav-right { display: flex; align-items: center; gap: 8px; }
-.nav-phone { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; padding: 0 14px; height: 40px; border-radius: var(--r-pill); transition: background .2s; }
+.nav-links a[aria-current="true"] { color: var(--ink); background: rgba(255,255,255,.08); }
+.nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.nav-phone { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; padding: 0 14px; height: 44px; border-radius: var(--r-pill); transition: background .2s; }
 .nav-phone:hover { background: rgba(255,255,255,.06); }
 .nav-phone .icon { color: var(--blue); }
 .menu-btn { display: none; background: var(--s1); box-shadow: inset 0 0 0 1px var(--line); }
@@ -121,31 +128,32 @@ section { padding: var(--sp-section) 0; }
 .mobile-menu {
   display: none; position: fixed; inset: 68px 12px auto; z-index: 49; padding: 12px;
   background: var(--s1); border-radius: var(--r-xl); box-shadow: var(--edge), 0 30px 60px rgba(0,0,0,.6);
-  opacity: 0; transform: translateY(-8px) scale(.98); pointer-events: none; transition: opacity .25s, transform .3s var(--ease);
+  opacity: 0; visibility: hidden; transform: translateY(-8px) scale(.98); pointer-events: none;
+  transition: opacity .2s, transform .2s var(--ease), visibility 0s .2s;
 }
-.mobile-menu.open { opacity: 1; transform: none; pointer-events: auto; }
+.mobile-menu.open { opacity: 1; visibility: visible; transform: none; pointer-events: auto; transition: opacity .25s, transform .3s var(--ease), visibility 0s; }
 .mobile-menu a { display: block; padding: 14px 14px; font-size: 17px; font-weight: 500; border-radius: var(--r-md); }
 .mobile-menu a:hover { background: var(--s2); }
 .mobile-menu .btn { width: 100%; margin-top: 8px; }
 
 /* ---------- Hero ---------- */
-.hero { padding: 168px 0 0; position: relative; text-align: center; }
+.hero { padding: 168px 0 0; position: relative; text-align: center; overflow-x: clip; }
 .hero::before {
   content: ""; position: absolute; left: 50%; top: 420px; width: 1100px; height: 700px; transform: translateX(-50%);
   background: radial-gradient(50% 50% at 50% 50%, rgba(0,153,255,.22), rgba(106,76,245,.12) 45%, transparent 70%);
   filter: blur(40px); pointer-events: none; z-index: -1;
 }
 .chip {
-  display: inline-flex; align-items: center; gap: 10px; height: 34px; padding: 0 14px 0 6px;
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 16px 6px 8px;
   border-radius: var(--r-pill); background: var(--s1); box-shadow: inset 0 0 0 1px var(--line);
   font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 32px;
 }
-.chip b { font-weight: 500; color: #fff; background: var(--blue); border-radius: var(--r-pill); padding: 4px 10px; font-size: 12px; }
+.chip b { font-weight: 500; color: #fff; background: var(--blue-strong); border-radius: var(--r-pill); padding: 4px 10px; font-size: 12px; }
 .hero h1 { max-width: 1000px; margin: 0 auto; }
 .hero h1 .blue { color: var(--blue); }
 .hero .subhead { max-width: 640px; margin: 28px auto 0; }
 .hero-ctas { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 36px; }
-.hero-note { margin: 16px 0 0; font-size: 13px; color: var(--muted); }
+.hero-note { margin: 16px 0 0; font-size: 14px; color: var(--muted); }
 
 /* split-word reveal */
 .split .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .1em; margin: 0 -.02em -.1em; }
@@ -204,13 +212,13 @@ section { padding: var(--sp-section) 0; }
 @keyframes slide { to { transform: translateX(-50%); } }
 
 /* ---------- Reveal ---------- */
-.reveal { opacity: 0; transform: translateY(24px); filter: blur(6px); transition: opacity .9s var(--ease), transform .9s var(--ease), filter .9s var(--ease); transition-delay: var(--d, 0ms); }
-.reveal.in { opacity: 1; transform: none; filter: none; }
+.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: var(--d, 0ms); }
+.js .reveal.in { opacity: 1; transform: none; }
 
 /* ---------- Audit ---------- */
 .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
 .checks { list-style: none; padding: 0; margin: 28px 0 32px; display: grid; gap: 12px; }
-.checks li { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.4; }
+.checks li { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.5; }
 .checks .icon { color: var(--green); margin-top: 1px; }
 .report { background: var(--s1); border-radius: var(--r-xl); box-shadow: var(--edge); padding: 8px; }
 .report-in { background: var(--canvas); border-radius: 14px; padding: 24px; }
@@ -239,38 +247,39 @@ section { padding: var(--sp-section) 0; }
   background: var(--s1); border-radius: var(--r-xl); padding: 30px; box-shadow: var(--edge);
   position: relative; overflow: hidden; transition: transform .4s var(--ease), background .3s;
 }
-.card:hover { transform: translateY(-4px); }
 .card h3 { margin: 0 0 10px; }
-.card p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
+.card p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.55; }
 .card .ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--s2); box-shadow: inset 0 0 0 1px var(--line); margin-bottom: 40px; }
 .card .ic .icon { width: 20px; height: 20px; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 24px; }
-.tag { font-size: 12px; font-weight: 500; color: var(--muted); padding: 6px 10px; border-radius: var(--r-pill); background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+.tag { font-size: 13px; font-weight: 500; color: var(--muted); padding: 6px 10px; border-radius: var(--r-pill); background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
 .span-2 { grid-column: span 2; } .span-3 { grid-column: span 3; } .span-4 { grid-column: span 4; }
 
 /* Gradient spotlight card (signature; max two per page) */
 .spot { color: #fff; padding: 36px; min-height: 380px; display: flex; flex-direction: column; box-shadow: none; isolation: isolate; }
 .spot::before { content: ""; position: absolute; inset: 0; z-index: -2; }
-.spot::after { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(420px circle at var(--mx, 70%) var(--my, 20%), rgba(255,255,255,.22), transparent 60%); opacity: .8; transition: opacity .3s; }
+.spot::after { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(420px circle at var(--mx, 70%) var(--my, 20%), rgba(255,255,255,.12), transparent 60%); opacity: .8; transition: opacity .3s; }
 .spot-violet::before {
   background:
+    linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
     radial-gradient(80% 90% at 85% 10%, #b39bff 0%, transparent 55%),
     radial-gradient(90% 90% at 10% 100%, var(--g-magenta) 0%, transparent 60%),
     linear-gradient(160deg, #7b61ff 0%, var(--g-violet) 40%, #2c1a86 100%);
 }
 .spot-sunset::before {
   background:
-    radial-gradient(90% 80% at 90% 0%, #ffd29a 0%, transparent 55%),
+    linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)),
+    radial-gradient(90% 80% at 90% 0%, #ff9a5c 0%, transparent 55%),
     radial-gradient(80% 90% at 0% 100%, var(--g-coral) 0%, transparent 65%),
     linear-gradient(150deg, #ffa066 0%, var(--g-orange) 40%, #c2344f 100%);
 }
-.spot p { color: rgba(255,255,255,.82); }
+.spot p { color: rgba(255,255,255,.94); }
 .spot .btn { margin-top: auto; align-self: flex-start; }
 .spot .ic { background: rgba(255,255,255,.16); box-shadow: none; }
 .spot-num { font-family: var(--display); font-weight: 500; letter-spacing: -0.05em; font-size: clamp(64px, 8vw, 110px); line-height: .85; margin: 8px 0 18px; }
 .mini-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 28px 0; }
 .mini-kpis div { background: rgba(0,0,0,.22); backdrop-filter: blur(8px); border-radius: var(--r-lg); padding: 14px; }
-.mini-kpis small { font-size: 11px; font-weight: 500; opacity: .75; }
+.mini-kpis small { font-size: 12px; font-weight: 500; opacity: .9; }
 .mini-kpis strong { display: block; font-family: var(--display); font-size: 28px; font-weight: 500; letter-spacing: -0.05em; margin-top: 4px; }
 
 /* ---------- Stats ---------- */
@@ -279,14 +288,14 @@ section { padding: var(--sp-section) 0; }
 .stat:last-child { border-right: 0; }
 .stat .big { font-family: var(--display); font-size: clamp(52px, 6vw, 85px); font-weight: 500; letter-spacing: -0.05em; line-height: .95; font-variant-numeric: tabular-nums; }
 .stat .big small { font-size: .32em; letter-spacing: -0.02em; color: var(--muted); margin-left: 6px; }
-.stat p { margin: 16px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.stat p { margin: 16px 0 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
 .stat p strong { color: var(--ink); font-weight: 500; }
-.source { margin-top: 16px; font-size: 12px; color: var(--muted); }
+.source { margin-top: 16px; font-size: 13px; color: var(--muted); }
 
 /* ---------- Tabs (industries) ---------- */
 .tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: var(--r-pill); background: var(--s1); box-shadow: inset 0 0 0 1px var(--line); margin-bottom: 24px; position: relative; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
-.tab { position: relative; z-index: 1; height: 40px; padding: 0 20px; border: 0; border-radius: var(--r-pill); background: none; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--muted); transition: color .25s; white-space: nowrap; }
+.tab { position: relative; z-index: 1; height: 44px; padding: 0 20px; border: 0; border-radius: var(--r-pill); background: none; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--muted); transition: color .25s; white-space: nowrap; }
 .tab[aria-selected="true"] { color: var(--ink); }
 .tab-pill { position: absolute; top: 4px; bottom: 4px; left: 0; border-radius: var(--r-pill); background: var(--s2); box-shadow: 0 0 0 1px var(--line), inset 0 1px 0 rgba(255,255,255,.08); transition: transform .45s var(--ease), width .45s var(--ease); }
 .ind-panel { display: grid; grid-template-columns: 1.1fr 1fr; gap: 12px; }
@@ -297,7 +306,7 @@ section { padding: var(--sp-section) 0; }
 .ind-panel.show .card:nth-child(2) { animation-delay: 80ms; }
 @keyframes pop { from { opacity: 0; transform: translateY(14px); } }
 .fix-list { list-style: none; margin: 0; padding: 0; display: grid; }
-.fix-list li { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line-soft); font-size: 15px; line-height: 1.4; }
+.fix-list li { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line-soft); font-size: 16px; line-height: 1.5; }
 .fix-list li:last-child { border: 0; }
 .fix-list b { font-family: var(--display); font-weight: 500; color: var(--blue); min-width: 22px; }
 .searches { margin-top: auto; padding-top: 28px; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -320,17 +329,16 @@ section { padding: var(--sp-section) 0; }
 /* ---------- Pricing ---------- */
 .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: stretch; }
 .plan { background: var(--s1); border-radius: var(--r-xl); padding: 30px; box-shadow: var(--edge); display: flex; flex-direction: column; transition: transform .4s var(--ease); }
-.plan:hover { transform: translateY(-4px); }
 .plan.featured { background: var(--s2); box-shadow: 0 0 0 1px var(--blue), 0 0 0 5px rgba(0,153,255,.14), 0 30px 80px rgba(0,153,255,.12); }
 .plan-top { display: flex; justify-content: space-between; align-items: center; }
-.badge { font-size: 12px; font-weight: 500; padding: 5px 10px; border-radius: var(--r-pill); background: var(--blue); color: #fff; }
+.badge { font-size: 13px; font-weight: 500; padding: 5px 10px; border-radius: var(--r-pill); background: var(--blue-strong); color: #fff; }
 .plan .for { color: var(--muted); font-size: 14px; margin: 10px 0 28px; line-height: 1.4; min-height: 40px; }
 .price { display: flex; align-items: baseline; gap: 8px; }
-.price b { font-family: var(--display); font-size: 62px; font-weight: 500; letter-spacing: -0.05em; line-height: 1; }
+.price b { font-family: var(--display); font-variant-numeric: tabular-nums; font-size: 62px; font-weight: 500; letter-spacing: -0.05em; line-height: 1; }
 .price span { color: var(--muted); font-size: 15px; }
 .price-sub { font-size: 13px; color: var(--muted); margin-top: 10px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
 .plan ul { list-style: none; padding: 0; margin: 24px 0 32px; display: grid; gap: 12px; flex: 1; }
-.plan li { display: flex; gap: 10px; font-size: 14px; font-weight: 500; line-height: 1.4; }
+.plan li { display: flex; gap: 10px; font-size: 15px; font-weight: 500; line-height: 1.45; }
 .plan li .icon { color: var(--green); margin-top: 1px; }
 .plan .btn { width: 100%; }
 .price-foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px; margin-top: 28px; font-size: 14px; color: var(--muted); }
@@ -342,10 +350,10 @@ section { padding: var(--sp-section) 0; }
 .step { background: var(--s1); border-radius: var(--r-xl); padding: 26px; box-shadow: var(--edge); }
 .step-n { display: flex; align-items: center; justify-content: space-between; margin-bottom: 56px; }
 .step-n b { font-family: var(--display); font-weight: 500; font-size: 15px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); transition: background .4s, color .4s, box-shadow .4s; }
-.step.lit .step-n b { background: var(--blue); color: #fff; box-shadow: 0 0 0 6px rgba(0,153,255,.15); }
-.step-n span { font-size: 12px; font-weight: 500; color: var(--muted); }
+.step.lit .step-n b { background: var(--blue-strong); color: #fff; box-shadow: 0 0 0 6px rgba(0,153,255,.15); }
+.step-n span { font-size: 13px; font-weight: 500; color: var(--muted); }
 .step h3 { margin: 0 0 8px; }
-.step p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.step p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
 .progress { height: 2px; background: var(--line); border-radius: 2px; margin-bottom: 12px; overflow: hidden; }
 .progress i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--blue), var(--g-violet)); transition: width .15s linear; }
 
@@ -378,7 +386,7 @@ section { padding: var(--sp-section) 0; }
 .faq details[open] summary .pm { transform: rotate(45deg); background: var(--s2); }
 .faq summary:hover .pm { background: var(--s2); }
 .faq .ans { overflow: hidden; }
-.faq .ans p { margin: 0; padding: 0 56px 24px 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+.faq .ans p { margin: 0; padding: 0 56px 24px 0; color: var(--muted); font-size: 16px; line-height: 1.6; max-width: 68ch; }
 
 /* ---------- CTA + form ---------- */
 .cta { position: relative; }
@@ -391,23 +399,26 @@ section { padding: var(--sp-section) 0; }
 .form { background: var(--canvas); border-radius: var(--r-xl); padding: 28px; box-shadow: var(--edge); display: grid; gap: 14px; position: relative; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .field { display: grid; gap: 8px; }
-.field label { font-size: 13px; font-weight: 500; }
+.field label { font-size: 14px; font-weight: 500; }
 .field label span { color: var(--muted); font-weight: 400; }
 .field input, .field select {
   width: 100%; height: 44px; padding: 0 14px; border-radius: var(--r-md); border: 0; background: var(--s1);
-  box-shadow: inset 0 0 0 1px var(--line); font-size: 15px; outline: none; transition: box-shadow .2s, background .2s; appearance: none;
+  box-shadow: inset 0 0 0 1px var(--line); font-size: 16px; outline: none; transition: box-shadow .2s, background .2s; appearance: none;
 }
 .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23999' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-.field input::placeholder { color: #5c5c5c; }
+.field input::placeholder { color: #8a8a8a; }
 .field input:hover, .field select:hover { box-shadow: inset 0 0 0 1px #3a3a3a; }
 .field input:focus, .field select:focus { box-shadow: inset 0 0 0 1px var(--blue), 0 0 0 4px rgba(0,153,255,.18); background: var(--s2); }
-.field.err input { box-shadow: inset 0 0 0 1px var(--g-coral); }
-.field .msg { font-size: 12px; color: var(--g-coral); display: none; }
+.field.err input { box-shadow: inset 0 0 0 2px var(--g-coral); }
+.field .msg { font-size: 14px; color: var(--g-coral); display: none; }
+.field .msg::before { content: "! "; font-weight: 700; }
 .field.err .msg { display: block; }
 .form .btn { width: 100%; margin-top: 6px; }
-.form small { font-size: 12px; color: var(--muted); text-align: center; }
-.form-done { position: absolute; inset: 0; border-radius: inherit; background: var(--canvas); display: grid; place-content: center; text-align: center; gap: 10px; padding: 32px; opacity: 0; pointer-events: none; transition: opacity .4s; }
-.form.done .form-done { opacity: 1; pointer-events: auto; }
+.form small { font-size: 13px; color: var(--muted); text-align: center; }
+.form .btn[disabled] { opacity: .5; cursor: progress; }
+.form-done { position: absolute; inset: 0; border-radius: inherit; background: var(--canvas); display: grid; place-content: center; text-align: center; gap: 10px; padding: 32px; opacity: 0; visibility: hidden; transition: opacity .4s, visibility 0s .4s; }
+.form.done .form-done { opacity: 1; visibility: visible; transition: opacity .4s, visibility 0s; }
+.form-done:focus { outline: none; }
 .form-done .ok { width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 8px; display: grid; place-items: center; background: rgba(34,197,94,.14); color: var(--green); }
 .form-done .ok .icon { width: 26px; height: 26px; }
 .form-done p { margin: 0; color: var(--muted); max-width: 300px; }
@@ -417,11 +428,17 @@ footer { padding: 72px 0 40px; }
 .foot-big { font-family: var(--display); font-weight: 500; letter-spacing: -0.06em; font-size: clamp(64px, 16vw, 220px); line-height: .8; color: var(--s2); margin: 0 0 56px; user-select: none; white-space: nowrap; }
 .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; padding-bottom: 40px; border-bottom: 1px solid var(--line-soft); }
 .foot-grid p { color: var(--muted); max-width: 300px; margin: 16px 0 0; line-height: 1.45; }
-.foot-grid h4 { font-size: 13px; font-weight: 500; color: var(--muted); margin: 0 0 16px; }
-.foot-grid ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.foot-grid h2 { font-size: 13px; font-weight: 500; color: var(--muted); margin: 0 0 8px; letter-spacing: 0; }
+.foot-grid ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+.foot-grid ul a { display: inline-flex; align-items: center; min-height: 44px; }
 .foot-grid a { font-size: 14px; transition: color .2s; }
 .foot-grid ul a:hover { color: var(--blue); }
-.foot-bottom { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 24px; font-size: 12px; color: var(--muted); }
+.foot-bottom { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 24px; font-size: 13px; color: var(--muted); }
+.motion-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; border-radius: var(--r-pill); background: var(--s1); box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; }
+.motion-toggle:hover { color: var(--ink); background: var(--s2); }
+.motion-ctrl { display: flex; justify-content: center; margin-top: 20px; }
+.motion-paused .marquee-track, .motion-paused .live i { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .motion-ctrl { display: none; } }
 .live { display: inline-flex; align-items: center; gap: 8px; }
 .live i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(34,197,94,.6); animation: ping 2s infinite; }
 @keyframes ping { 70% { box-shadow: 0 0 0 8px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
@@ -450,15 +467,14 @@ footer { padding: 72px 0 40px; }
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); color: var(--ink); stroke: none;
 }
 .general-container .content > .icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.general-container .radio:checked + .content > .icon { background: var(--blue); box-shadow: none; }
+.general-container .radio:checked + .content > .icon { background: var(--blue-strong); box-shadow: none; }
 .general-container .card-title {
   position: absolute; left: 72px; right: 24px; bottom: 18px; z-index: 1; margin: 0;
   font-family: var(--display); font-weight: 500; font-size: clamp(18px, 1.8vw, 24px); line-height: 1.15; letter-spacing: -0.03em;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   opacity: 0; transform: translateY(10px); transition: opacity .3s, transform .5s var(--ease);
 }
 .general-container .radio:checked + .content .card-title { opacity: 1; transform: none; transition-delay: .25s; }
-.general-container .subtitle { display: block; margin-top: 4px; font-family: var(--body); font-size: 13px; font-weight: 500; letter-spacing: -0.01em; color: rgba(255,255,255,.72); }
+.general-container .subtitle { display: block; margin-top: 4px; font-family: var(--body); font-size: 13px; font-weight: 500; letter-spacing: -0.01em; color: rgba(255,255,255,.85); }
 .showcase-note { margin-top: 16px; }
 
 /* ---------- Responsive (Framer breakpoints: 1199 / 810) ---------- */
@@ -519,13 +535,14 @@ footer { padding: 72px 0 40px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0ms !important; }
   html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; filter: none; }
+  .js .reveal { opacity: 1; transform: none; }
   .split .w > span { transform: none; }
   .mock { transform: none; }
 }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
@@ -564,7 +581,7 @@ footer { padding: 72px 0 40px; }
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-right">
-      <a class="nav-phone" href="tel:+14035550142" aria-label="Call (403) 555-0142"><svg class="icon"><use href="#i-phone"/></svg><span>(403) 555-0142</span></a>
+      <a class="nav-phone" href="tel:+14035550142" aria-label="Call (403) 555-0142"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>(403) 555-0142</span></a>
       <a class="btn btn-primary" href="#audit">Get free audit</a>
       <button class="btn btn-circle menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span></button>
     </div>
@@ -580,7 +597,8 @@ footer { padding: 72px 0 40px; }
   <a class="btn btn-primary btn-lg" href="#audit">Get my free website audit</a>
 </nav>
 
-<main id="top">
+<main id="main">
+<span id="top"></span>
 
 <!-- ================= HERO ================= -->
 <section class="hero" style="padding-bottom:0">
@@ -589,34 +607,34 @@ footer { padding: 72px 0 40px; }
     <h1 class="d-xxl split" data-split>More calls. More bookings. <span class="blue">Less guessing.</span></h1>
     <p class="subhead reveal" style="--d:400ms">Websites, local search and automatic lead follow-up for Calgary businesses, in one monthly plan, with a live dashboard of every call it brings in.</p>
     <div class="hero-ctas reveal" style="--d:520ms">
-      <a href="#audit" class="btn btn-primary btn-lg">Get my free website audit <svg class="icon icon-arrow"><use href="#i-arrow"/></svg></a>
+      <a href="#audit" class="btn btn-primary btn-lg">Get my free website audit <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       <a href="#pricing" class="btn btn-translucent btn-lg">See pricing</a>
     </div>
     <p class="hero-note reveal" style="--d:600ms">A written report in 2 business days. No call required, no obligation.</p>
 
     <div class="stage reveal" style="--d:650ms">
-      <div class="mock" id="mock" aria-label="Example client dashboard with sample data">
+      <div class="mock" id="mock" role="img" aria-label="Example client dashboard with sample data: phone calls, form leads and bookings rising over six months, and Google Maps rank up from 9th to 3rd.">
         <div class="mock-bar">
           <i></i><i></i><i></i>
-          <div class="mock-url"><svg class="icon"><use href="#i-lock"/></svg>dashboard.opengrowth.ca</div>
+          <div class="mock-url"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>dashboard.opengrowth.ca</div>
           <span class="mock-tag">Sample data</span>
         </div>
         <div class="dash">
           <div class="dash-side" aria-hidden="true">
-            <span class="on"><svg class="icon"><use href="#i-grid"/></svg>Overview</span>
-            <span><svg class="icon"><use href="#i-phone"/></svg>Calls</span>
-            <span><svg class="icon"><use href="#i-cal"/></svg>Bookings</span>
-            <span><svg class="icon"><use href="#i-pin"/></svg>Maps rank</span>
-            <span><svg class="icon"><use href="#i-star"/></svg>Reviews</span>
-            <span><svg class="icon"><use href="#i-flow"/></svg>Automations</span>
-            <span style="margin-top:auto"><svg class="icon"><use href="#i-gear"/></svg>Settings</span>
+            <span class="on"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Overview</span>
+            <span><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Calls</span>
+            <span><svg class="icon" aria-hidden="true"><use href="#i-cal"/></svg>Bookings</span>
+            <span><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Maps rank</span>
+            <span><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>Reviews</span>
+            <span><svg class="icon" aria-hidden="true"><use href="#i-flow"/></svg>Automations</span>
+            <span style="margin-top:auto"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg>Settings</span>
           </div>
           <div class="dash-main">
             <div class="dash-head"><b>Growth report · last 6 months</b><span class="micro">Updated live</span></div>
             <div class="kpis">
-              <div class="kpi"><small>Phone calls</small><strong data-count="148">0</strong><em>↑ 62%</em></div>
-              <div class="kpi"><small>Form leads</small><strong data-count="87">0</strong><em>↑ 41%</em></div>
-              <div class="kpi"><small>Bookings</small><strong data-count="64">0</strong><em>↑ 28%</em></div>
+              <div class="kpi"><small>Phone calls</small><strong data-count="148">148</strong><em>↑ 62%</em></div>
+              <div class="kpi"><small>Form leads</small><strong data-count="87">87</strong><em>↑ 41%</em></div>
+              <div class="kpi"><small>Bookings</small><strong data-count="64">64</strong><em>↑ 28%</em></div>
               <div class="kpi"><small>Google Maps rank</small><strong>#3</strong><em>from #9</em></div>
             </div>
             <div class="dash-row">
@@ -641,17 +659,18 @@ footer { padding: 72px 0 40px; }
 
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track" id="marquee">
-      <span><svg class="icon"><use href="#i-phone"/></svg>Click-to-call on every page</span>
-      <span><svg class="icon"><use href="#i-pin"/></svg>Google Maps ranking</span>
-      <span><svg class="icon"><use href="#i-spark"/></svg>AI search optimization</span>
-      <span><svg class="icon"><use href="#i-msg"/></svg>Missed-call text back</span>
-      <span><svg class="icon"><use href="#i-chart"/></svg>Live Power BI dashboard</span>
-      <span><svg class="icon"><use href="#i-bolt"/></svg>Under 2-second load times</span>
-      <span><svg class="icon"><use href="#i-cal"/></svg>Online booking in two taps</span>
-      <span><svg class="icon"><use href="#i-star"/></svg>Automatic review requests</span>
-      <span><svg class="icon"><use href="#i-ads"/></svg>Google Ads management</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Click-to-call on every page</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Google Maps ranking</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg>AI search optimization</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-msg"/></svg>Missed-call text back</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Live Power BI dashboard</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg>Under 2-second load times</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-cal"/></svg>Online booking in two taps</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>Automatic review requests</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-ads"/></svg>Google Ads management</span>
     </div>
   </div>
+  <div class="motion-ctrl"><button class="motion-toggle" type="button" aria-pressed="false">Pause animations</button></div>
 </section>
 
 <!-- ================= AUDIT ================= -->
@@ -662,25 +681,25 @@ footer { padding: 72px 0 40px; }
       <h2 class="d-lg split" data-split>See exactly what your website is costing you.</h2>
       <p class="body-lg reveal" style="margin-top:24px">Send us your website address. Within 2 business days you get a short written audit of your site and Google Business Profile, with every fix ranked by how many calls it is likely to bring in.</p>
       <ul class="checks">
-        <li class="reveal" style="--d:60ms"><svg class="icon"><use href="#i-check"/></svg>Mobile speed and Core Web Vitals score</li>
-        <li class="reveal" style="--d:120ms"><svg class="icon"><use href="#i-check"/></svg>Where you rank on Google Maps for your top 3 searches</li>
-        <li class="reveal" style="--d:180ms"><svg class="icon"><use href="#i-check"/></svg>Missing calls to action, broken forms and tracking gaps</li>
-        <li class="reveal" style="--d:240ms"><svg class="icon"><use href="#i-check"/></svg>Your review count against your three nearest competitors</li>
+        <li class="reveal" style="--d:60ms"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Mobile speed and Core Web Vitals score</li>
+        <li class="reveal" style="--d:120ms"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Where you rank on Google Maps for your top 3 searches</li>
+        <li class="reveal" style="--d:180ms"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Missing calls to action, broken forms and tracking gaps</li>
+        <li class="reveal" style="--d:240ms"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Your review count against your three nearest competitors</li>
       </ul>
-      <a href="#audit" class="btn btn-primary btn-lg reveal">Request my audit <svg class="icon icon-arrow"><use href="#i-arrow"/></svg></a>
+      <a href="#audit" class="btn btn-primary btn-lg reveal">Request my audit <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
 
-    <div class="report reveal" id="report" aria-label="Example audit report">
+    <div class="report reveal" id="report" role="group" aria-label="Example audit report">
       <div class="report-in">
         <div class="report-top">
           <div><b>yourbusiness.ca</b><small>Example audit · 5 fixes found</small></div>
           <div class="score"><svg viewBox="0 0 56 56"><circle class="track" cx="28" cy="28" r="24"/><circle class="val" cx="28" cy="28" r="24"/></svg><span>41</span></div>
         </div>
-        <div class="r-line" style="transition-delay:.2s"><i class="st bad">✕</i><span>Mobile speed</span><em>41 / 100</em></div>
-        <div class="r-line" style="transition-delay:.35s"><i class="st bad">✕</i><span>Click-to-call button</span><em>Missing on mobile</em></div>
-        <div class="r-line" style="transition-delay:.5s"><i class="st warn">!</i><span>Google Maps rank</span><em>#9 for “dentist near me”</em></div>
-        <div class="r-line" style="transition-delay:.65s"><i class="st warn">!</i><span>Google reviews</span><em>23 vs competitors’ 140</em></div>
-        <div class="r-line" style="transition-delay:.8s"><i class="st ok">✓</i><span>SSL and domain</span><em>OK</em></div>
+        <div class="r-line" style="transition-delay:.2s"><i class="st bad" aria-hidden="true">✕</i><span><span class="sr-only">Problem: </span>Mobile speed</span><em>41 / 100</em></div>
+        <div class="r-line" style="transition-delay:.35s"><i class="st bad" aria-hidden="true">✕</i><span><span class="sr-only">Problem: </span>Click-to-call button</span><em>Missing on mobile</em></div>
+        <div class="r-line" style="transition-delay:.5s"><i class="st warn" aria-hidden="true">!</i><span><span class="sr-only">Warning: </span>Google Maps rank</span><em>#9 for “dentist near me”</em></div>
+        <div class="r-line" style="transition-delay:.65s"><i class="st warn" aria-hidden="true">!</i><span><span class="sr-only">Warning: </span>Google reviews</span><em>23 vs competitors’ 140</em></div>
+        <div class="r-line" style="transition-delay:.8s"><i class="st ok" aria-hidden="true">✓</i><span><span class="sr-only">Passed: </span>SSL and domain</span><em>OK</em></div>
       </div>
     </div>
   </div>
@@ -690,10 +709,10 @@ footer { padding: 72px 0 40px; }
 <section style="padding-top:0" aria-label="Why Open Growth">
   <div class="wrap">
     <div class="stats">
-      <div class="stat reveal"><div class="big"><span data-count="5">0</span><small>of 30</small></div><p>Calgary-area agencies we reviewed publish their prices. <strong>We publish ours.</strong></p></div>
-      <div class="stat reveal" style="--d:80ms"><div class="big"><span data-count="1">0</span><small>day</small></div><p>Reply time on every support request, <strong>written into your plan.</strong></p></div>
+      <div class="stat reveal"><div class="big"><span data-count="5">5</span><small>of 30</small></div><p>Calgary-area agencies we reviewed publish their prices. <strong>We publish ours.</strong></p></div>
+      <div class="stat reveal" style="--d:80ms"><div class="big"><span data-count="1">1</span><small>day</small></div><p>Reply time on every support request, <strong>written into your plan.</strong></p></div>
       <div class="stat reveal" style="--d:160ms"><div class="big"><span data-count="0">0</span><small>lock-in</small></div><p>Month-to-month plans. <strong>Stay because it works,</strong> not because of a contract.</p></div>
-      <div class="stat reveal" style="--d:240ms"><div class="big"><span data-count="90">0</span><small>days</small></div><p>More tracked leads within 90 days, <strong>or your next month is free.</strong></p></div>
+      <div class="stat reveal" style="--d:240ms"><div class="big"><span data-count="90">90</span><small>days</small></div><p>More tracked leads within 90 days, <strong>or your next month is free.</strong></p></div>
     </div>
     <p class="source">Source: Open Growth review of 30 web design agencies serving Calgary, September 2026.</p>
   </div>
@@ -712,26 +731,26 @@ footer { padding: 72px 0 40px; }
 
     <div class="bento">
       <article class="card span-2 reveal">
-        <div class="ic"><svg class="icon"><use href="#i-bolt"/></svg></div>
+        <div class="ic"><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg></div>
         <h3 class="headline">Websites that load in under 2 seconds</h3>
         <p>Designed around one job: getting the visitor to call, book or fill in a form. Built on a platform you can edit yourself.</p>
         <div class="tags"><span class="tag">Mobile-first</span><span class="tag">Online booking</span><span class="tag">Click-to-call</span></div>
       </article>
       <article class="card span-2 reveal" style="--d:80ms">
-        <div class="ic"><svg class="icon"><use href="#i-pin"/></svg></div>
+        <div class="ic"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg></div>
         <h3 class="headline">Local SEO and AI search</h3>
         <p>Google Business Profile, review requests, city pages and the structured data that ChatGPT and Google’s AI answers read.</p>
         <div class="tags"><span class="tag">Google Maps</span><span class="tag">City pages</span><span class="tag">AI search</span></div>
       </article>
       <article class="card span-2 reveal" style="--d:160ms">
-        <div class="ic"><svg class="icon"><use href="#i-flow"/></svg></div>
+        <div class="ic"><svg class="icon" aria-hidden="true"><use href="#i-flow"/></svg></div>
         <h3 class="headline">Lead follow-up and Google Ads</h3>
         <p>n8n automations that text back missed calls, confirm bookings and ask happy customers for a review. Ads when you are ready to scale.</p>
         <div class="tags"><span class="tag">Missed-call text back</span><span class="tag">Google Ads</span></div>
       </article>
 
       <article class="card spot spot-violet span-4 reveal" data-spot>
-        <div class="ic"><svg class="icon"><use href="#i-chart"/></svg></div>
+        <div class="ic"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></div>
         <h3 class="d-md" style="max-width:520px">Proof you can check any day of the month.</h3>
         <p style="max-width:520px;margin-top:12px">Most agencies tell you the site is doing well. We show you. Every plan includes a live Power BI dashboard that counts the calls, forms, bookings and map rankings your website brings in.</p>
         <div class="mini-kpis" aria-label="What the dashboard tracks">
@@ -739,11 +758,11 @@ footer { padding: 72px 0 40px; }
           <div><small>Before vs after</small><strong>Day 1</strong></div>
           <div><small>Summary email</small><strong>Monthly</strong></div>
         </div>
-        <a href="#audit" class="btn btn-primary">See your starting numbers <svg class="icon icon-arrow"><use href="#i-arrow"/></svg></a>
+        <a href="#audit" class="btn btn-primary">See your starting numbers <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </article>
 
       <article class="card span-2 reveal" style="--d:80ms">
-        <div class="ic"><svg class="icon"><use href="#i-star"/></svg></div>
+        <div class="ic"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg></div>
         <h3 class="headline">Reviews on autopilot</h3>
         <p>A request goes out at launch, after every completed job and with your first monthly report. The top agencies in our study average 139 Google reviews; the bottom five average 15.</p>
         <div class="tags"><span class="tag">Google reviews</span><span class="tag">Text + email</span></div>
@@ -827,7 +846,7 @@ footer { padding: 72px 0 40px; }
 
     <div class="general-container reveal" role="radiogroup" aria-label="Concept designs">
       <input class="radio" type="radio" name="card" id="card-1" checked />
-      <label class="content" for="card-1" style="--img:url('../assets/generated/hero-showcase.png')">
+      <label class="content" for="card-1" style="--img:url('../assets/generated/hero-showcase.webp')">
         <span class="icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         </span>
@@ -837,7 +856,7 @@ footer { padding: 72px 0 40px; }
         </h3>
       </label>
       <input class="radio" type="radio" name="card" id="card-2" />
-      <label class="content" for="card-2" style="--img:url('../assets/generated/industry-clinics.png')">
+      <label class="content" for="card-2" style="--img:url('../assets/generated/industry-clinics.webp')">
         <span class="icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
         </span>
@@ -847,7 +866,7 @@ footer { padding: 72px 0 40px; }
         </h3>
       </label>
       <input class="radio" type="radio" name="card" id="card-3" />
-      <label class="content" for="card-3" style="--img:url('../assets/generated/industry-restaurants.png')">
+      <label class="content" for="card-3" style="--img:url('../assets/generated/industry-restaurants.webp')">
         <span class="icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
         </span>
@@ -857,7 +876,7 @@ footer { padding: 72px 0 40px; }
         </h3>
       </label>
       <input class="radio" type="radio" name="card" id="card-4" />
-      <label class="content" for="card-4" style="--img:url('../assets/generated/industry-trades.png')">
+      <label class="content" for="card-4" style="--img:url('../assets/generated/industry-trades.webp')">
         <span class="icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
         </span>
@@ -881,7 +900,7 @@ footer { padding: 72px 0 40px; }
         <h3 class="headline" style="font-size:24px">Launch pricing. Results published.</h3>
         <p style="margin-top:12px;max-width:440px">We are taking on five Calgary businesses at 30% off our Grow plan for the first six months. In return, we track your numbers before and after and publish them as a case study, with your permission.</p>
         <div class="spots" aria-hidden="true" style="margin-top:28px"><i></i><i></i><i></i><i></i><i></i></div>
-        <a href="#audit" class="btn btn-primary btn-lg">Apply with a free audit <svg class="icon icon-arrow"><use href="#i-arrow"/></svg></a>
+        <a href="#audit" class="btn btn-primary btn-lg">Apply with a free audit <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </article>
 
       <article class="card reveal" style="--d:100ms">
@@ -891,8 +910,8 @@ footer { padding: 72px 0 40px; }
           <div class="case-row"><dt>Client</dt><dd>Your business and industry</dd></div>
           <div class="case-row"><dt>Problem</dt><dd>What was stopping customers from calling</dd></div>
           <div class="case-row"><dt>What we built</dt><dd>The site, profile and automations we shipped</dd></div>
-          <div class="case-row hl"><dt>Calls / month</dt><dd><s>Before</s><svg class="icon"><use href="#i-arrow"/></svg><strong>After</strong></dd></div>
-          <div class="case-row hl"><dt>Maps rank</dt><dd><s>Before</s><svg class="icon"><use href="#i-arrow"/></svg><strong>After</strong></dd></div>
+          <div class="case-row hl"><dt>Calls / month</dt><dd><s>Before</s><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><strong>After</strong></dd></div>
+          <div class="case-row hl"><dt>Maps rank</dt><dd><s>Before</s><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><strong>After</strong></dd></div>
           <div class="case-row"><dt>Timeframe</dt><dd>Measured over 90 days</dd></div>
         </dl>
       </article>
@@ -916,11 +935,11 @@ footer { padding: 72px 0 40px; }
         <div class="price"><b>$3,900</b><span>one time</span></div>
         <div class="price-sub">+ $150 / month hosting and care</div>
         <ul>
-          <li><svg class="icon"><use href="#i-check"/></svg>Up to 8 pages, written for your customers</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Click-to-call, booking and quote forms</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Google Business Profile set up</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Hosting, backups and updates</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Live in 3 to 4 weeks</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Up to 8 pages, written for your customers</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Click-to-call, booking and quote forms</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Google Business Profile set up</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Hosting, backups and updates</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Live in 3 to 4 weeks</li>
         </ul>
         <a href="#audit" class="btn btn-secondary btn-lg">Start with a free audit</a>
       </div>
@@ -930,11 +949,11 @@ footer { padding: 72px 0 40px; }
         <div class="price"><b>$1,200</b><span>/ month</span></div>
         <div class="price-sub">$1,500 setup · website included</div>
         <ul>
-          <li><svg class="icon"><use href="#i-check"/></svg>Everything in Launch</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Local SEO and 2 city pages per quarter</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Google profile posts and review requests</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Missed-call text back and lead follow-up</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Live Power BI dashboard</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Everything in Launch</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Local SEO and 2 city pages per quarter</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Google profile posts and review requests</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Missed-call text back and lead follow-up</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Live Power BI dashboard</li>
         </ul>
         <a href="#audit" class="btn btn-primary btn-lg">Start with a free audit</a>
       </div>
@@ -944,19 +963,19 @@ footer { padding: 72px 0 40px; }
         <div class="price"><b>$2,400</b><span>/ month</span></div>
         <div class="price-sub">+ your Google Ads budget</div>
         <ul>
-          <li><svg class="icon"><use href="#i-check"/></svg>Everything in Grow</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Google Ads management</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>AI search optimization</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Custom booking and quote automations</li>
-          <li><svg class="icon"><use href="#i-check"/></svg>Monthly strategy call</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Everything in Grow</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Google Ads management</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>AI search optimization</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Custom booking and quote automations</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Monthly strategy call</li>
         </ul>
         <a href="#audit" class="btn btn-secondary btn-lg">Start with a free audit</a>
       </div>
     </div>
     <div class="price-foot reveal">
-      <span><svg class="icon"><use href="#i-unlock"/></svg>Cancel any month, keep your website</span>
-      <span><svg class="icon"><use href="#i-clock"/></svg>Replies within 1 business day</span>
-      <span><svg class="icon"><use href="#i-shield"/></svg>More leads in 90 days, or the next month is free</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-unlock"/></svg>Cancel any month, keep your website</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Replies within 1 business day</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>More leads in 90 days, or the next month is free</span>
     </div>
   </div>
 </section>
@@ -993,11 +1012,11 @@ footer { padding: 72px 0 40px; }
       <p class="eyebrow">Service areas</p>
       <h3 class="d-md">Local to Calgary and the towns around it.</h3>
       <div class="areas">
-        <a class="area" href="#audit"><svg class="icon"><use href="#i-pin"/></svg>Calgary</a>
-        <a class="area" href="#audit"><svg class="icon"><use href="#i-pin"/></svg>Airdrie</a>
-        <a class="area" href="#audit"><svg class="icon"><use href="#i-pin"/></svg>Cochrane</a>
-        <a class="area" href="#audit"><svg class="icon"><use href="#i-pin"/></svg>Chestermere</a>
-        <a class="area" href="#audit"><svg class="icon"><use href="#i-pin"/></svg>Okotoks</a>
+        <a class="area" href="#audit"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Calgary</a>
+        <a class="area" href="#audit"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Airdrie</a>
+        <a class="area" href="#audit"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Cochrane</a>
+        <a class="area" href="#audit"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Chestermere</a>
+        <a class="area" href="#audit"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Okotoks</a>
       </div>
       <p class="muted" style="margin:28px 0 0;font-size:14px;line-height:1.45">We meet in person anywhere in the Calgary region, and over video with anyone who prefers it.</p>
     </div>
@@ -1031,12 +1050,12 @@ footer { padding: 72px 0 40px; }
       <p class="body-lg reveal">Something else? Call <a href="tel:+14035550142" style="color:var(--ink)">(403) 555-0142</a>.</p>
     </div>
     <div class="faq reveal">
-      <details><summary>What do I actually get in the free audit?<span class="pm"><svg class="icon"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>A short written report, usually 3 to 4 pages, covering your mobile speed, Google Maps ranking for your top searches, review count against three competitors and any broken forms or missing calls to action. Each fix is ranked by likely impact. You can use it with us, with another agency or on your own.</p></div></details>
-      <details><summary>Do I own my website?<span class="pm"><svg class="icon"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Yes. The domain, content and website are yours. If you cancel, we hand everything over and help you move it.</p></div></details>
-      <details><summary>How is this different from building it myself on Wix?<span class="pm"><svg class="icon"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Builders give you the tools; we give you the result. We write the pages, set up tracking, run your Google profile, follow up on leads and show you what came in each month, and you have a person to call when something breaks.</p></div></details>
-      <details><summary>How do you measure more leads?<span class="pm"><svg class="icon"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Before we start, we record your current calls, form fills, bookings and map rank. Call tracking and form tracking then count every lead on your dashboard, so the before and after numbers are clear.</p></div></details>
-      <details><summary>How long until I see results?<span class="pm"><svg class="icon"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Most clients see more calls from the new site within the first month. Local search and review growth build over 60 to 90 days, which is why our guarantee runs over 90 days.</p></div></details>
-      <details><summary>Do you work with businesses outside those three industries?<span class="pm"><svg class="icon"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Yes, if you are a local business that wins customers by phone or booking. Clinics, restaurants and trades suppliers are where we have the most ready-made experience.</p></div></details>
+      <details><summary>What do I actually get in the free audit?<span class="pm"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>A short written report, usually 3 to 4 pages, covering your mobile speed, Google Maps ranking for your top searches, review count against three competitors and any broken forms or missing calls to action. Each fix is ranked by likely impact. You can use it with us, with another agency or on your own.</p></div></details>
+      <details><summary>Do I own my website?<span class="pm"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Yes. The domain, content and website are yours. If you cancel, we hand everything over and help you move it.</p></div></details>
+      <details><summary>How is this different from building it myself on Wix?<span class="pm"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Builders give you the tools; we give you the result. We write the pages, set up tracking, run your Google profile, follow up on leads and show you what came in each month, and you have a person to call when something breaks.</p></div></details>
+      <details><summary>How do you measure more leads?<span class="pm"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Before we start, we record your current calls, form fills, bookings and map rank. Call tracking and form tracking then count every lead on your dashboard, so the before and after numbers are clear.</p></div></details>
+      <details><summary>How long until I see results?<span class="pm"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Most clients see more calls from the new site within the first month. Local search and review growth build over 60 to 90 days, which is why our guarantee runs over 90 days.</p></div></details>
+      <details><summary>Do you work with businesses outside those three industries?<span class="pm"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></span></summary><div class="ans"><p>Yes, if you are a local business that wins customers by phone or booking. Clinics, restaurants and trades suppliers are where we have the most ready-made experience.</p></div></details>
     </div>
   </div>
 </section>
@@ -1059,22 +1078,23 @@ footer { padding: 72px 0 40px; }
         </div>
         <form class="form reveal" id="auditForm" novalidate>
           <div class="row2">
-            <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required /><span class="msg">Please add your name.</span></div>
-            <div class="field"><label for="f-biz">Business name</label><input id="f-biz" name="business" autocomplete="organization" required /><span class="msg">Please add your business name.</span></div>
+            <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required aria-describedby="f-name-msg" /><span class="msg" id="f-name-msg">Enter your name so we know who to send it to.</span></div>
+            <div class="field"><label for="f-biz">Business name</label><input id="f-biz" name="business" autocomplete="organization" required aria-describedby="f-biz-msg" /><span class="msg" id="f-biz-msg">Enter your business name.</span></div>
           </div>
-          <div class="field"><label for="f-site">Website <span>(or Google profile link)</span></label><input id="f-site" name="website" placeholder="yourbusiness.ca" required /><span class="msg">Where should we look?</span></div>
+          <div class="field"><label for="f-site">Website <span>(or Google profile link)</span></label><input id="f-site" name="website" placeholder="yourbusiness.ca" inputmode="url" autocomplete="url" required aria-describedby="f-site-msg" /><span class="msg" id="f-site-msg">Enter your website address or Google profile link, like yourbusiness.ca.</span></div>
           <div class="row2">
-            <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required /><span class="msg">Please add a valid email.</span></div>
+            <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-msg" /><span class="msg" id="f-email-msg">Enter an email address like you@yourbusiness.ca.</span></div>
             <div class="field"><label for="f-tel">Phone <span>(optional)</span></label><input id="f-tel" name="phone" type="tel" autocomplete="tel" /></div>
           </div>
           <div class="field">
             <label for="f-ind">Industry</label>
             <select id="f-ind" name="industry"><option>Clinic</option><option>Restaurant</option><option>Trades supplier</option><option>Other local business</option></select>
           </div>
-          <button class="btn btn-primary btn-lg" type="submit">Get my free audit <svg class="icon icon-arrow"><use href="#i-arrow"/></svg></button>
+          <button class="btn btn-primary btn-lg" type="submit">Get my free audit <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button>
           <small>No spam. We use your details only to send the audit.</small>
-          <div class="form-done" role="status" aria-live="polite">
-            <div class="ok"><svg class="icon"><use href="#i-check"/></svg></div>
+          <p class="sr-only" id="form-status" role="status"></p>
+          <div class="form-done" tabindex="-1">
+            <div class="ok"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div>
             <h3 class="headline">Audit request received.</h3>
             <p>Your report will arrive within 2 business days. We’ll email you if we have a question.</p>
           </div>
@@ -1095,9 +1115,9 @@ footer { padding: 72px 0 40px; }
         <a href="#top" class="logo"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#fff"/><path d="M8 21.5l6-6 4 3 6.5-8" fill="none" stroke="#090909" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Open Growth</a>
         <p>Websites, local search and lead follow-up for Calgary businesses.</p>
       </div>
-      <div><h4>Services</h4><ul><li><a href="#services">Websites</a></li><li><a href="#services">Local SEO</a></li><li><a href="#services">AI search</a></li><li><a href="#services">Lead follow-up</a></li><li><a href="#services">Google Ads</a></li></ul></div>
-      <div><h4>Areas</h4><ul><li><a href="#audit">Calgary</a></li><li><a href="#audit">Airdrie</a></li><li><a href="#audit">Cochrane</a></li><li><a href="#audit">Chestermere</a></li><li><a href="#audit">Okotoks</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="#pricing">Pricing</a></li><li><a href="#process">Process</a></li><li><a href="#founding">Founding clients</a></li><li><a href="#faq">FAQ</a></li><li><a href="tel:+14035550142">(403) 555-0142</a></li></ul></div>
+      <div><h2>Services</h2><ul><li><a href="#services">Websites</a></li><li><a href="#services">Local SEO</a></li><li><a href="#services">AI search</a></li><li><a href="#services">Lead follow-up</a></li><li><a href="#services">Google Ads</a></li></ul></div>
+      <div><h2>Areas</h2><ul><li><a href="#audit">Calgary</a></li><li><a href="#audit">Airdrie</a></li><li><a href="#audit">Cochrane</a></li><li><a href="#audit">Chestermere</a></li><li><a href="#audit">Okotoks</a></li></ul></div>
+      <div><h2>Company</h2><ul><li><a href="#pricing">Pricing</a></li><li><a href="#process">Process</a></li><li><a href="#founding">Founding clients</a></li><li><a href="#faq">FAQ</a></li><li><a href="tel:+14035550142">(403) 555-0142</a></li></ul></div>
     </div>
     <div class="foot-bottom">
       <span class="live"><i></i>Booking audits this week</span>
@@ -1133,7 +1153,8 @@ footer { padding: 72px 0 40px; }
   /* Count-up numbers */
   function countUp(el) {
     var end = +el.getAttribute('data-count');
-    if (reduce || end === 0) { el.textContent = end; return; }
+    if (reduce || end === 0 || document.documentElement.classList.contains('motion-paused')) { el.textContent = end; return; }
+    el.textContent = 0;
     var t0 = null, dur = 1400;
     function tick(t) {
       if (!t0) t0 = t;
@@ -1230,9 +1251,13 @@ footer { padding: 72px 0 40px; }
   tabs.forEach(function (t, i) {
     t.addEventListener('click', function () { select(t); });
     t.addEventListener('keydown', function (e) {
-      var n = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-      if (!n) return;
-      var next = tabs[(i + n + tabs.length) % tabs.length]; next.focus(); select(next);
+      var next = null;
+      if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+      else if (e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+      else if (e.key === 'Home') next = tabs[0];
+      else if (e.key === 'End') next = tabs[tabs.length - 1];
+      if (!next) return;
+      e.preventDefault(); next.focus(); select(next);
     });
   });
   function syncPill() { movePill(document.querySelector('.tab[aria-selected="true"]')); }
@@ -1242,25 +1267,76 @@ footer { padding: 72px 0 40px; }
 
   /* Mobile menu */
   var btn = document.getElementById('menuBtn'), menu = document.getElementById('mobileMenu');
-  function setMenu(open) { btn.setAttribute('aria-expanded', open); btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); menu.classList.toggle('open', open); }
-  btn.addEventListener('click', function () { setMenu(btn.getAttribute('aria-expanded') !== 'true'); });
+  function isOpen() { return btn.getAttribute('aria-expanded') === 'true'; }
+  function setMenu(open, returnFocus) {
+    btn.setAttribute('aria-expanded', open); btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); menu.classList.toggle('open', open);
+    if (open) { var first = menu.querySelector('a'); if (first) first.focus(); }
+    else if (returnFocus) btn.focus();
+  }
+  btn.addEventListener('click', function () { setMenu(!isOpen()); });
   menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && isOpen()) setMenu(false, true); });
+  document.addEventListener('click', function (e) { if (isOpen() && !menu.contains(e.target) && !btn.contains(e.target)) setMenu(false); });
+  window.matchMedia('(min-width: 810px)').addEventListener('change', function (e) { if (e.matches) setMenu(false); });
+
+  /* Scroll spy: mark the current section in the main nav */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a'));
+  var seen = {};
+  var spy = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { seen[en.target.id] = en.isIntersecting; });
+    var current = null;
+    navLinks.forEach(function (a) { var id = a.getAttribute('href').slice(1); if (seen[id] && !current) current = id; });
+    navLinks.forEach(function (a) { if (a.getAttribute('href').slice(1) === current) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  navLinks.forEach(function (a) { var s = document.getElementById(a.getAttribute('href').slice(1)); if (s) spy.observe(s); });
+
+  /* Pause animations (WCAG 2.2.2), remembered per visitor */
+  var motionBtn = document.querySelector('.motion-toggle');
+  function setPaused(p) {
+    document.documentElement.classList.toggle('motion-paused', p);
+    motionBtn.setAttribute('aria-pressed', p ? 'true' : 'false');
+    try { localStorage.setItem('og-motion-paused', p ? '1' : '0'); } catch (err) { /* storage blocked */ }
+  }
+  var pausedSaved = false;
+  try { pausedSaved = localStorage.getItem('og-motion-paused') === '1'; } catch (err) { /* storage blocked */ }
+  setPaused(pausedSaved);
+  motionBtn.addEventListener('click', function () { setPaused(motionBtn.getAttribute('aria-pressed') !== 'true'); });
 
   /* Audit form: inline validation and success state (connect to your form backend) */
   var form = document.getElementById('auditForm');
+  var formStatus = document.getElementById('form-status');
+  var submitBtn = form.querySelector('button[type="submit"]');
+  function checkInput(inp) {
+    var bad = !inp.value.trim() || (inp.type === 'email' && !/^\S+@\S+\.\S+$/.test(inp.value.trim()));
+    inp.closest('.field').classList.toggle('err', bad);
+    if (bad) inp.setAttribute('aria-invalid', 'true'); else inp.removeAttribute('aria-invalid');
+    return !bad;
+  }
+  form.querySelectorAll('[required]').forEach(function (inp) {
+    inp.addEventListener('blur', function () { if (inp.value.trim() || inp.getAttribute('aria-invalid')) checkInput(inp); });
+    inp.addEventListener('input', function () { if (inp.getAttribute('aria-invalid')) checkInput(inp); });
+  });
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var ok = true;
+    var firstBad = null, count = 0;
     form.querySelectorAll('[required]').forEach(function (inp) {
-      var bad = !inp.value.trim() || (inp.type === 'email' && !/^\S+@\S+\.\S+$/.test(inp.value));
-      inp.closest('.field').classList.toggle('err', bad);
-      inp.setAttribute('aria-invalid', bad);
-      if (bad && ok) { inp.focus(); ok = false; }
+      if (!checkInput(inp)) { count++; if (!firstBad) firstBad = inp; }
     });
-    if (ok) form.classList.add('done');
+    if (firstBad) {
+      formStatus.textContent = count === 1 ? '1 field needs fixing.' : count + ' fields need fixing.';
+      firstBad.focus();
+      return;
+    }
+    formStatus.textContent = 'Sending your request.';
+    submitBtn.disabled = true;
+    /* TODO: send to your form backend here, then run the success step below */
+    setTimeout(function () {
+      form.classList.add('done');
+      form.querySelectorAll('input, select, button').forEach(function (el) { el.disabled = true; });
+      formStatus.textContent = 'Audit request received.';
+      form.querySelector('.form-done').focus();
+    }, 600);
   });
-  form.addEventListener('input', function (e) { var f = e.target.closest('.field'); if (f) f.classList.remove('err'); });
 
   document.getElementById('year').textContent = new Date().getFullYear();
 })();

@@ -166,6 +166,11 @@
         <span>More calls</span><i>✺</i><span>More bookings</span><i>✺</i><span>Higher on Google Maps</span><i>✺</i><span>Every lead answered in 60 seconds</span><i>✺</i><span>Results you can see live</span><i>✺</i>
       </div>
     </div>
+    <div class="container motion-ctrl">
+      <button class="motion-toggle" type="button" aria-pressed="false">
+        <span class="motion-toggle__icon" aria-hidden="true"></span> Pause animations
+      </button>
+    </div>
 
     <!-- ============ KINETIC STATEMENT ============ -->
     <section class="statement" aria-labelledby="statement-title">
@@ -196,7 +201,7 @@
         <h2 class="section-title" id="services-title">Everything that turns <span class="hl hl--blue">searches</span> into customers.</h2>
         <p class="services__hint"><i data-lucide="move-horizontal" aria-hidden="true"></i> Scroll to explore</p>
       </div>
-      <div class="services__viewport">
+      <div class="services__viewport" tabindex="0" role="region" aria-label="Services list">
         <ol class="services__track">
           <li class="svc svc--blue">
             <span class="svc__num">01</span>
@@ -272,10 +277,10 @@
               <span class="badge badge--sample">Sample data</span>
             </div>
             <div class="dash__kpis">
-              <div class="kpi"><p class="kpi__label">Phone calls</p><p class="kpi__val" data-count="86">86</p><p class="kpi__delta">▲ 18 vs last month</p></div>
-              <div class="kpi"><p class="kpi__label">Form fills</p><p class="kpi__val" data-count="41">41</p><p class="kpi__delta">▲ 9 vs last month</p></div>
-              <div class="kpi"><p class="kpi__label">Bookings</p><p class="kpi__val" data-count="37">37</p><p class="kpi__delta">▲ 6 vs last month</p></div>
-              <div class="kpi"><p class="kpi__label">Avg. map rank</p><p class="kpi__val">#<span data-count="3">3</span></p><p class="kpi__delta">▲ from #11</p></div>
+              <div class="kpi"><p class="kpi__label">Phone calls</p><p class="kpi__val" data-count="86">86</p><p class="kpi__delta"><span aria-hidden="true">▲</span><span class="sr-only">Up</span> 18 vs last month</p></div>
+              <div class="kpi"><p class="kpi__label">Form fills</p><p class="kpi__val" data-count="41">41</p><p class="kpi__delta"><span aria-hidden="true">▲</span><span class="sr-only">Up</span> 9 vs last month</p></div>
+              <div class="kpi"><p class="kpi__label">Bookings</p><p class="kpi__val" data-count="37">37</p><p class="kpi__delta"><span aria-hidden="true">▲</span><span class="sr-only">Up</span> 6 vs last month</p></div>
+              <div class="kpi"><p class="kpi__label">Avg. map rank</p><p class="kpi__val">#<span data-count="3">3</span></p><p class="kpi__delta"><span aria-hidden="true">▲</span><span class="sr-only">Up</span> from #11</p></div>
             </div>
             <div class="dash__chart">
               <p class="dash__chart-title">New leads per week</p>
@@ -300,7 +305,7 @@
           </figure>
 
           <!-- n8n automation flow -->
-          <div class="flow" aria-labelledby="flow-title">
+          <div class="flow" role="group" aria-labelledby="flow-title">
             <h3 id="flow-title" class="flow__title">What happens when a lead comes in at 9:47 pm</h3>
             <ol class="flow__steps">
               <li class="flow__step" data-step="0"><span class="flow__icon"><i data-lucide="inbox" aria-hidden="true"></i></span><span><b>Form fill or missed call</b> lands.</span><span class="flow__t">0:00</span></li>
@@ -387,7 +392,7 @@
 
         <div class="general-container" role="radiogroup" aria-label="Concept designs">
           <input class="radio" type="radio" name="card" id="card-1" checked />
-          <label class="content" for="card-1" style="--img:url('../assets/generated/hero-showcase.png'); --c:var(--yellow)">
+          <label class="content" for="card-1" style="--img:url('../assets/generated/hero-showcase.webp'); --c:var(--yellow)">
             <span class="icon"><i data-lucide="monitor-smartphone" aria-hidden="true"></i></span>
             <h3 class="card-title">
               A site that makes the phone ring
@@ -395,7 +400,7 @@
             </h3>
           </label>
           <input class="radio" type="radio" name="card" id="card-2" />
-          <label class="content" for="card-2" style="--img:url('../assets/generated/industry-clinics.png'); --c:var(--mint)">
+          <label class="content" for="card-2" style="--img:url('../assets/generated/industry-clinics.webp'); --c:var(--mint)">
             <span class="icon"><i data-lucide="heart-pulse" aria-hidden="true"></i></span>
             <h3 class="card-title">
               Clinics: booking in two taps
@@ -403,7 +408,7 @@
             </h3>
           </label>
           <input class="radio" type="radio" name="card" id="card-3" />
-          <label class="content" for="card-3" style="--img:url('../assets/generated/industry-restaurants.png'); --c:var(--pink)">
+          <label class="content" for="card-3" style="--img:url('../assets/generated/industry-restaurants.webp'); --c:var(--pink)">
             <span class="icon"><i data-lucide="utensils" aria-hidden="true"></i></span>
             <h3 class="card-title">
               Restaurants: orders without app fees
@@ -411,7 +416,7 @@
             </h3>
           </label>
           <input class="radio" type="radio" name="card" id="card-4" />
-          <label class="content" for="card-4" style="--img:url('../assets/generated/industry-trades.png'); --c:var(--orange)">
+          <label class="content" for="card-4" style="--img:url('../assets/generated/industry-trades.webp'); --c:var(--orange)">
             <span class="icon"><i data-lucide="wrench" aria-hidden="true"></i></span>
             <h3 class="card-title">
               Trades: a quote in 60 seconds
@@ -465,7 +470,7 @@
         </div>
 
         <!-- Plan picker -->
-        <div class="picker" aria-labelledby="picker-title">
+        <div class="picker" role="group" aria-labelledby="picker-title">
           <p class="picker__title" id="picker-title"><i data-lucide="wand-2" aria-hidden="true"></i> Help me pick: tick what you want</p>
           <div class="picker__opts">
             <label class="toggle-chip"><input type="checkbox" name="need" value="site" checked> <span>A new or better website</span></label>
@@ -532,7 +537,7 @@
         </div>
 
         <!-- Cost calculator -->
-        <div class="calc" aria-labelledby="calc-title">
+        <div class="calc" role="group" aria-labelledby="calc-title">
           <div class="calc__inputs">
             <h3 class="calc__title" id="calc-title">What would it cost over time?</h3>
             <fieldset class="seg">
@@ -554,10 +559,11 @@
               <input type="range" id="calc-months" min="1" max="24" step="1" value="12">
             </div>
           </div>
-          <div class="calc__out" aria-live="polite">
+          <div class="calc__out">
             <div class="calc__line"><span>Up front</span><strong id="calc-upfront">$1,500</strong></div>
             <div class="calc__line"><span>Each month</span><strong id="calc-monthly">$1,200</strong></div>
             <div class="calc__line calc__line--total"><span>Total over <b id="calc-months-label">12 months</b></span><strong id="calc-total">$15,900</strong></div>
+            <p class="sr-only" id="calc-live" aria-live="polite"></p>
             <p class="calc__note">Estimate before GST. Ad spend goes straight to Google, not to us. Your audit comes with a fixed written quote.</p>
           </div>
         </div>
@@ -592,8 +598,8 @@
             </div>
 
             <!-- UPDATE: change data-open (0-5) as spots fill. -->
-            <div class="spots" data-open="5" aria-label="Founding spots: 5 of 5 open">
-              <span class="spot"></span><span class="spot"></span><span class="spot"></span><span class="spot"></span><span class="spot"></span>
+            <div class="spots" data-open="5">
+              <span class="spots__dots" aria-hidden="true"><span class="spot"></span><span class="spot"></span><span class="spot"></span><span class="spot"></span><span class="spot"></span></span>
               <p class="spots__label"><strong id="spots-count">5 of 5</strong> founding spots open</p>
             </div>
             <a class="btn btn--blue btn--lg magnetic" href="#audit">Apply with a free audit <i data-lucide="arrow-right" aria-hidden="true"></i></a>
@@ -900,7 +906,6 @@
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.453.0/dist/umd/lucide.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
   <script src="main.js" defer></script>
 </body>
 </html>

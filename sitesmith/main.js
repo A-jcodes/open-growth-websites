@@ -62,9 +62,16 @@
   var menu = $('#mobile-menu');
   var mobileCta = $('.mobile-cta');
 
+  var behindMenu = $$('main, footer, .mobile-cta, .motion-ctrl');
+  function setBehindInert(on) {
+    behindMenu.forEach(function (el) {
+      if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert');
+    });
+  }
   function openMenu() {
     if (!menu) return;
     menu.hidden = false;
+    setBehindInert(true);
     menuToggle.setAttribute('aria-expanded', 'true');
     d.body.style.overflow = 'hidden';
     if (lenis) lenis.stop();
@@ -75,6 +82,7 @@
   function closeMenu() {
     if (!menu || menu.hidden) return;
     menu.hidden = true;
+    setBehindInert(false);
     menuToggle.setAttribute('aria-expanded', 'false');
     d.body.style.overflow = '';
     if (lenis) lenis.start();
@@ -110,6 +118,46 @@
       try { target.focus({ preventScroll: true }); } catch (err) { /* old browsers */ }
     });
   });
+
+  /* ---------- 4b. Scroll spy: mark the current section in the main nav ---------- */
+  (function () {
+    var links = $$('.nav a[href^="#"]');
+    if (!links.length || !('IntersectionObserver' in w)) return;
+    var byId = {};
+    links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+    var visible = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { visible[en.target.id] = en.isIntersecting; });
+      var current = null;
+      links.forEach(function (a) {
+        var id = a.getAttribute('href').slice(1);
+        if (visible[id] && !current) current = id;
+      });
+      links.forEach(function (a) {
+        if (a.getAttribute('href').slice(1) === current) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    Object.keys(byId).forEach(function (id) {
+      var sec = d.getElementById(id);
+      if (sec) io.observe(sec);
+    });
+  })();
+
+  /* ---------- 4c. Pause animations (remembered per visitor) ---------- */
+  (function () {
+    var btn = $('.motion-toggle');
+    if (!btn) return;
+    function set(paused) {
+      root.classList.toggle('motion-paused', paused);
+      btn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+      try { w.localStorage.setItem('og-motion-paused', paused ? '1' : '0'); } catch (e) { /* storage blocked */ }
+    }
+    var saved = false;
+    try { saved = w.localStorage.getItem('og-motion-paused') === '1'; } catch (e) { /* storage blocked */ }
+    set(saved);
+    btn.addEventListener('click', function () { set(btn.getAttribute('aria-pressed') !== 'true'); });
+  })();
 
   /* ---------- 5. Mobile sticky CTA ---------- */
   var auditVisible = false;
@@ -238,9 +286,9 @@
     });
     statement.textContent = '';
     statement.appendChild(frag);
-    gsap.fromTo($$('.kw', statement), { opacity: 0.14 }, {
-      opacity: 1, ease: 'none', stagger: 0.1,
-      scrollTrigger: { trigger: statement, start: 'top 80%', end: 'bottom 45%', scrub: 0.5 }
+    gsap.fromTo($$('.kw', statement), { opacity: 0.2 }, {
+      opacity: 1, ease: 'power1.out', duration: 0.35, stagger: 0.035,
+      scrollTrigger: { trigger: statement, start: 'top 75%', once: true }
     });
   }
 
@@ -577,6 +625,14 @@
     calc.monthly.textContent = monthlyText;
 
     var total = upfront + monthly * m;
+    var live = $('#calc-live');
+    if (live) {
+      w.clearTimeout(calc.liveTimer);
+      calc.liveTimer = w.setTimeout(function () {
+        live.textContent = planNames[plan] + ': ' + money(upfront) + ' up front, ' + monthlyText +
+          ' a month. Total over ' + m + (m === 1 ? ' month' : ' months') + ': ' + money(total) + '.';
+      }, 500);
+    }
     if (hasGSAP && !reduceMotion && calc.shown !== total) {
       if (calc.tween) calc.tween.kill();
       var o = { v: calc.shown };
@@ -632,7 +688,6 @@
     $$('.spot', spots).forEach(function (s, i) { s.classList.toggle('is-taken', i < 5 - open); });
     var count = $('#spots-count');
     if (count) count.textContent = open + ' of 5';
-    spots.setAttribute('aria-label', 'Founding spots: ' + open + ' of 5 open');
   })();
 
   /* ---------- 15. Service-area map ---------- */
@@ -758,13 +813,22 @@
       form.hidden = true;
       success.hidden = false;
       success.focus();
-      if (typeof w.confetti === 'function' && !reduceMotion) {
-        try {
-          w.confetti({
-            particleCount: 160, spread: 90, startVelocity: 42, origin: { y: 0.65 },
-            colors: ['#2f4bff', '#ffd43b', '#ff7ac6', '#35d49a', '#ff6b2c']
-          });
-        } catch (e) { /* decorative */ }
+      if (!reduceMotion) {
+        var burst = function () {
+          try {
+            w.confetti({
+              particleCount: 160, spread: 90, startVelocity: 42, origin: { y: 0.65 },
+              colors: ['#2f4bff', '#ffd43b', '#ff7ac6', '#35d49a', '#ff6b2c']
+            });
+          } catch (e) { /* decorative */ }
+        };
+        if (typeof w.confetti === 'function') burst();
+        else {
+          var s = d.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
+          s.onload = burst;
+          d.head.appendChild(s);
+        }
       }
       if (hasST) ScrollTrigger.refresh();
     }
@@ -806,6 +870,7 @@
       };
 
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
+      form.setAttribute('aria-busy', 'true');
 
       sendToWebhook(data).then(function () {
         showSuccess(nameVal);
@@ -813,6 +878,7 @@
         if (status) status.textContent = 'Sorry, something went wrong. Please call (403) 555-0142 or email hello@opengrowth.ca.';
       }).then(function () {
         if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = submitHTML; }
+        form.removeAttribute('aria-busy');
       });
     });
 

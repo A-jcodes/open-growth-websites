@@ -10,7 +10,7 @@
   if (hasST) gsap.registerPlugin(ScrollTrigger);
 
   // ---------- Icons ----------
-  if (window.lucide) lucide.createIcons();
+  if (window.lucide) lucide.createIcons({ attrs: { 'aria-hidden': 'true' } });
 
   // ---------- Year ----------
   const year = document.getElementById('year');
@@ -38,20 +38,56 @@
       const target = id === '#top' ? document.body : document.querySelector(id);
       if (!target) return;
       e.preventDefault();
-      document.body.classList.remove('menu-open');
-      menuToggle?.setAttribute('aria-expanded', 'false');
+      setMenu(false);
       const offset = -(header?.offsetHeight || 70) + 1;
       if (lenis) lenis.scrollTo(id === '#top' ? 0 : target, { offset, duration: 1.4 });
       else window.scrollTo({ top: id === '#top' ? 0 : target.getBoundingClientRect().top + window.scrollY + offset, behavior: reduceMotion ? 'auto' : 'smooth' });
+      if (id !== '#top') {
+        if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+      }
     });
   });
 
   // ---------- Header + mobile menu ----------
-  const menuToggle = document.getElementById('menuToggle');
-  menuToggle?.addEventListener('click', () => {
-    const open = document.body.classList.toggle('menu-open');
+  function setMenu(open, returnFocus) {
+    if (!menuToggle) return;
+    document.body.classList.toggle('menu-open', open);
     menuToggle.setAttribute('aria-expanded', String(open));
+    menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    if (open) document.querySelector('#nav a')?.focus();
+    else if (returnFocus) menuToggle.focus();
+  }
+  const menuToggle = document.getElementById('menuToggle');
+  menuToggle?.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.body.classList.contains('menu-open')) setMenu(false, true);
   });
+  document.addEventListener('click', (e) => {
+    if (document.body.classList.contains('menu-open') && !e.target.closest('#nav, #menuToggle')) setMenu(false);
+  });
+
+  // ---------- Scroll spy: mark the current section in the nav ----------
+  const navLinks = [...document.querySelectorAll('#nav a')];
+  const seen = {};
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((en) => { seen[en.target.id] = en.isIntersecting; });
+    const current = navLinks.map((a) => a.hash.slice(1)).find((id) => seen[id]);
+    navLinks.forEach((a) => (a.hash.slice(1) === current ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  navLinks.forEach((a) => { const s = document.getElementById(a.hash.slice(1)); if (s) spy.observe(s); });
+
+  // ---------- Pause animations (WCAG 2.2.2), remembered per visitor ----------
+  const motionBtn = document.querySelector('.motion-toggle');
+  const setPaused = (p) => {
+    document.documentElement.classList.toggle('motion-paused', p);
+    motionBtn?.setAttribute('aria-pressed', String(p));
+    try { localStorage.setItem('og-motion-paused', p ? '1' : '0'); } catch (err) { /* storage blocked */ }
+  };
+  let pausedSaved = false;
+  try { pausedSaved = localStorage.getItem('og-motion-paused') === '1'; } catch (err) { /* storage blocked */ }
+  setPaused(pausedSaved);
+  motionBtn?.addEventListener('click', () => setPaused(motionBtn.getAttribute('aria-pressed') !== 'true'));
 
   const mobileCta = document.querySelector('.mobile-cta');
   const hero = document.querySelector('.hero');
@@ -62,7 +98,9 @@
     if (mobileCta && hero && audit) {
       const pastHero = y > hero.offsetHeight - 200;
       const atAudit = audit.getBoundingClientRect().top < window.innerHeight * 0.6;
-      mobileCta.classList.toggle('show', pastHero && !atAudit);
+      const show = pastHero && !atAudit;
+      mobileCta.classList.toggle('show', show);
+      mobileCta.inert = !show;
     }
   };
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -112,8 +150,10 @@
         frag.appendChild(wrapWord(node.cloneNode(true)));
       }
     });
+    title.setAttribute('aria-label', title.textContent.replace(/\s+/g, ' ').trim());
     title.textContent = '';
     title.appendChild(frag);
+    title.querySelectorAll(':scope > span').forEach((s) => s.setAttribute('aria-hidden', 'true'));
 
     function wrapWord(child) {
       const outer = document.createElement('span');
@@ -300,11 +340,13 @@
 
   document.querySelectorAll('#demoTabs .tab').forEach((tab) => {
     tab.addEventListener('click', () => {
-      document.querySelectorAll('#demoTabs .tab').forEach((t) => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+      document.querySelectorAll('#demoTabs .tab').forEach((t) => { t.classList.remove('active'); t.setAttribute('aria-pressed', 'false'); });
       tab.classList.add('active');
-      tab.setAttribute('aria-selected', 'true');
+      tab.setAttribute('aria-pressed', 'true');
       const key = tab.dataset.series;
       setStats(key);
+      const s = series[key];
+      canvas?.setAttribute('aria-label', `Sample chart: weekly ${s.label} rose from ${s.after[0]} to ${s.after[s.after.length - 1]} over 12 weeks, compared with ${Math.min(...s.before)} to ${Math.max(...s.before)} before Open Growth.`);
       if (chart) {
         chart.data.datasets[0].data = series[key].after;
         chart.data.datasets[1].data = series[key].before;
@@ -329,19 +371,33 @@
     c.setAttribute('aria-pressed', c.classList.contains('selected'));
   }));
 
+  const messages = {
+    name: 'Enter your name so we know who to send it to.',
+    business: 'Enter your business name.',
+    email: 'Enter an email address like you@yourbusiness.ca.',
+  };
+  const checkField = (f) => {
+    const v = f.value.trim();
+    const bad = !v || (f.name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+    f.classList.toggle('invalid', bad);
+    if (bad) f.setAttribute('aria-invalid', 'true'); else f.removeAttribute('aria-invalid');
+    const msg = document.getElementById(f.getAttribute('aria-describedby'));
+    if (msg) msg.textContent = bad ? messages[f.name] : '';
+    return !bad;
+  };
+  const required = form ? ['name', 'business', 'email'].map((n) => form.elements[n]) : [];
+  required.forEach((f) => {
+    f.addEventListener('blur', () => { if (f.value.trim() || f.getAttribute('aria-invalid')) checkField(f); });
+    f.addEventListener('input', () => { if (f.getAttribute('aria-invalid')) checkField(f); });
+  });
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const err = document.getElementById('formError');
-    const fields = ['name', 'business', 'email'].map((n) => form.elements[n]);
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.elements.email.value.trim());
-    let ok = true;
-    fields.forEach((f) => {
-      const bad = !f.value.trim() || (f.name === 'email' && !emailOk);
-      f.classList.toggle('invalid', bad);
-      if (bad) ok = false;
-    });
-    err.hidden = ok;
-    if (!ok) {
+    const bad = required.filter((f) => !checkField(f));
+    err.textContent = bad.length ? (bad.length === 1 ? '1 field needs fixing.' : `${bad.length} fields need fixing.`) : '';
+    if (bad.length) {
+      bad[0].focus();
       if (animate) gsap.fromTo(form, { x: -8 }, { x: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
       return;
     }
@@ -358,6 +414,7 @@
     const show = () => {
       inner.hidden = true;
       success.hidden = false;
+      success.focus();
       if (animate) {
         gsap.from(success.children, { y: 20, opacity: 0, duration: 0.7, stagger: 0.1, ease: 'power3.out' });
         gsap.from('.success-ico', { scale: 0, rotation: -90, duration: 0.8, ease: 'back.out(2)' });
@@ -367,7 +424,6 @@
     else show();
   });
 
-  form?.querySelectorAll('input').forEach((i) => i.addEventListener('input', () => i.classList.remove('invalid')));
 
   // Recalculate trigger positions once fonts and images settle
   window.addEventListener('load', () => hasST && ScrollTrigger.refresh());

@@ -1,11 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-CA">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Open Growth | Websites that bring Calgary businesses more calls</title>
   <meta name="description" content="Open Growth builds websites, local SEO and lead follow-up systems that bring Calgary businesses more calls and bookings. Start with a free website and Google Business Profile audit." />
   <meta name="theme-color" content="#0d0f0b" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23f3f0e8' stroke='%230d0f0b' stroke-width='3'/%3E%3Cpath d='M9 20l5-5 4 3 6-7' fill='none' stroke='%231b5e3f' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,6 +14,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- ============ HEADER ============ -->
   <header class="site-header" id="top">
@@ -34,14 +36,14 @@
       </nav>
 
       <div class="header-actions">
-        <a class="phone" href="tel:+14035550142"><i data-lucide="phone"></i><span>(403) 555-0142</span></a>
+        <a class="phone" href="tel:+14035550142" aria-label="Call (403) 555-0142"><i data-lucide="phone"></i><span>(403) 555-0142</span></a>
         <a href="#audit" class="btn btn-lime btn-sm magnetic">Get my free audit</a>
-        <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav"><span></span><span></span></button>
       </div>
     </div>
   </header>
 
-  <main>
+  <main id="main">
 
     <!-- ============ HERO ============ -->
     <section class="hero">
@@ -72,7 +74,7 @@
         </div>
 
         <!-- Live dashboard card -->
-        <div class="hero-visual" data-tilt>
+        <div class="hero-visual" data-tilt role="img" aria-label="Sample monthly growth report: 142 calls, up 38%; 67 form fills, up 24%; 41 bookings, up 31%; Google Maps rank 3, up from 11.">
           <div class="dash-card">
             <div class="dash-head">
               <div>
@@ -85,22 +87,22 @@
             <div class="kpis">
               <div class="kpi">
                 <span class="kpi-label"><i data-lucide="phone-call"></i> Calls</span>
-                <span class="kpi-val" data-count="142">0</span>
+                <span class="kpi-val" data-count="142">142</span>
                 <span class="kpi-delta up">+38%</span>
               </div>
               <div class="kpi">
                 <span class="kpi-label"><i data-lucide="mail"></i> Form fills</span>
-                <span class="kpi-val" data-count="67">0</span>
+                <span class="kpi-val" data-count="67">67</span>
                 <span class="kpi-delta up">+24%</span>
               </div>
               <div class="kpi">
                 <span class="kpi-label"><i data-lucide="calendar-check"></i> Bookings</span>
-                <span class="kpi-val" data-count="41">0</span>
+                <span class="kpi-val" data-count="41">41</span>
                 <span class="kpi-delta up">+31%</span>
               </div>
               <div class="kpi">
                 <span class="kpi-label"><i data-lucide="map-pin"></i> Map rank</span>
-                <span class="kpi-val">#<span data-count="3">0</span></span>
+                <span class="kpi-val">#<span data-count="3">3</span></span>
                 <span class="kpi-delta up">from #11</span>
               </div>
             </div>
@@ -152,6 +154,11 @@
         <span>Live results dashboards</span><span class="star">✦</span>
       </div>
     </div>
+    <div class="wrap motion-ctrl">
+      <button class="motion-toggle" type="button" aria-pressed="false">
+        <span class="motion-toggle__icon" aria-hidden="true"></span> Pause animations
+      </button>
+    </div>
 
     <!-- ============ PROBLEM / COMPARISON ============ -->
     <section class="section compare-section">
@@ -162,24 +169,24 @@
           <p class="lede">A good-looking site that nobody calls from is a cost, not an asset. We build the site, get it found on Google, and follow up on every lead, then show you the numbers each month.</p>
         </div>
 
-        <div class="table-scroll" data-reveal>
+        <div class="table-scroll" data-reveal tabindex="0" role="region" aria-label="Comparison table, scrolls sideways on small screens">
           <table class="compare">
             <thead>
               <tr>
-                <th></th>
-                <th>DIY builder</th>
-                <th>Typical agency</th>
-                <th class="us">Open Growth</th>
+                <th scope="col"><span class="sr-only">Feature</span></th>
+                <th scope="col">DIY builder</th>
+                <th scope="col">Typical agency</th>
+                <th scope="col" class="us">Open Growth</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td>Who builds it</td><td>You, after hours</td><td>Their team</td><td class="us">Austin, start to finish</td></tr>
-              <tr><td>Help when something breaks</td><td><span class="no">Support tickets</span></td><td>An account manager</td><td class="us"><span class="yes">Reply within 1 business day</span></td></tr>
-              <tr><td>Tracks calls, forms and bookings</td><td><span class="no">No</span></td><td>Sometimes</td><td class="us"><span class="yes">Live dashboard</span></td></tr>
-              <tr><td>Local SEO and Google profile</td><td><span class="no">DIY</span></td><td>Extra cost</td><td class="us"><span class="yes">Included in Grow</span></td></tr>
-              <tr><td>Follows up on every lead</td><td><span class="no">No</span></td><td><span class="no">Rarely</span></td><td class="us"><span class="yes">Automatic, in 60 seconds</span></td></tr>
-              <tr><td>Prices shown up front</td><td><span class="yes">Yes</span></td><td><span class="no">"Request a quote"</span></td><td class="us"><span class="yes">Yes, below</span></td></tr>
-              <tr><td>Contract</td><td>Monthly</td><td>6 to 12 months</td><td class="us"><span class="yes">Month-to-month</span></td></tr>
+              <tr><th scope="row">Who builds it</th><td>You, after hours</td><td>Their team</td><td class="us">Austin, start to finish</td></tr>
+              <tr><th scope="row">Help when something breaks</th><td><span class="no">Support tickets</span></td><td>An account manager</td><td class="us"><span class="yes">Reply within 1 business day</span></td></tr>
+              <tr><th scope="row">Tracks calls, forms and bookings</th><td><span class="no">No</span></td><td>Sometimes</td><td class="us"><span class="yes">Live dashboard</span></td></tr>
+              <tr><th scope="row">Local SEO and Google profile</th><td><span class="no">DIY</span></td><td>Extra cost</td><td class="us"><span class="yes">Included in Grow</span></td></tr>
+              <tr><th scope="row">Follows up on every lead</th><td><span class="no">No</span></td><td><span class="no">Rarely</span></td><td class="us"><span class="yes">Automatic, in 60 seconds</span></td></tr>
+              <tr><th scope="row">Prices shown up front</th><td><span class="yes">Yes</span></td><td><span class="no">"Request a quote"</span></td><td class="us"><span class="yes">Yes, below</span></td></tr>
+              <tr><th scope="row">Contract</th><td>Monthly</td><td>6 to 12 months</td><td class="us"><span class="yes">Month-to-month</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -222,7 +229,7 @@
               <li><i data-lucide="check"></i> Tracking set up before we change anything</li>
               <li><i data-lucide="check"></i> Figures reported monthly on your dashboard</li>
             </ul>
-            <div class="spots" aria-label="5 founding spots">
+            <div class="spots" role="img" aria-label="5 of 5 founding spots open">
               <span></span><span></span><span></span><span></span><span></span>
             </div>
             <a href="#audit" class="btn btn-lime magnetic">Apply with a free audit <i data-lucide="arrow-right"></i></a>
@@ -230,10 +237,10 @@
         </div>
 
         <div class="metric-strip" data-reveal>
-          <div class="metric"><strong><span data-count="60">0</span>s</strong><span>Lead follow-up time, day or night</span></div>
-          <div class="metric"><strong><span data-count="3">0</span> days</strong><span>Free audit turnaround</span></div>
-          <div class="metric"><strong><span data-count="4">0</span> weeks</strong><span>Typical build to launch</span></div>
-          <div class="metric"><strong><span data-count="1">0</span> day</strong><span>Maximum reply time</span></div>
+          <div class="metric"><strong><span data-count="60">60</span>s</strong><span>Lead follow-up time, day or night</span></div>
+          <div class="metric"><strong><span data-count="3">3</span> days</strong><span>Free audit turnaround</span></div>
+          <div class="metric"><strong><span data-count="4">4</span> weeks</strong><span>Typical build to launch</span></div>
+          <div class="metric"><strong><span data-count="1">1</span> day</strong><span>Maximum reply time</span></div>
         </div>
       </div>
     </section>
@@ -256,7 +263,7 @@
               <div class="mb-body">
                 <div class="mb-h"></div><div class="mb-p"></div><div class="mb-p short"></div>
                 <div class="mb-btn">Book now</div>
-                <div class="mb-score"><span>Page speed</span><strong data-count="98">0</strong></div>
+                <div class="mb-score"><span>Page speed</span><strong data-count="98">98</strong></div>
               </div>
             </div>
           </article>
@@ -309,12 +316,12 @@
           <p class="eyebrow">Your numbers, every month</p>
           <h2>See exactly what your website <em class="serif">brings in.</em></h2>
           <p class="lede">No vanity metrics. Your dashboard tracks the things that pay the bills and compares them with where you started.</p>
-          <div class="tabs" role="tablist" id="demoTabs">
-            <button role="tab" class="tab active" data-series="calls" aria-selected="true">Calls</button>
-            <button role="tab" class="tab" data-series="leads" aria-selected="false">Form fills</button>
-            <button role="tab" class="tab" data-series="bookings" aria-selected="false">Bookings</button>
+          <div class="tabs" role="group" aria-label="Show chart for" id="demoTabs">
+            <button type="button" class="tab active" data-series="calls" aria-pressed="true">Calls</button>
+            <button type="button" class="tab" data-series="leads" aria-pressed="false">Form fills</button>
+            <button type="button" class="tab" data-series="bookings" aria-pressed="false">Bookings</button>
           </div>
-          <div class="demo-stat">
+          <div class="demo-stat" aria-live="polite">
             <div><span class="ds-label">Before launch</span><strong id="dsBefore">18</strong><span class="ds-unit">/ week</span></div>
             <div><span class="ds-label">After 12 weeks</span><strong id="dsAfter" class="lime-text">41</strong><span class="ds-unit">/ week</span></div>
           </div>
@@ -325,7 +332,7 @@
               <span>Weekly <span id="chartLabel">calls</span></span>
               <span class="legend"><span class="lg lg-a"></span> This year <span class="lg lg-b"></span> Before Open Growth</span>
             </div>
-            <div class="chart-box"><canvas id="demoChart" aria-label="Sample chart of weekly results" role="img"></canvas></div>
+            <div class="chart-box"><canvas id="demoChart" role="img" aria-label="Sample chart: weekly calls rose from 18 to 41 over 12 weeks, compared with a flat 16 to 19 before Open Growth."></canvas></div>
             <p class="sample-note dark-note">Sample data for illustration.</p>
           </div>
         </div>
@@ -395,7 +402,7 @@
           <article class="price-card" data-reveal data-tilt>
             <p class="plan">Launch</p>
             <p class="plan-desc">A fast website built to turn visitors into calls.</p>
-            <p class="price"><span class="cur">$</span><span data-count="3900" data-format="comma">0</span><span class="per">one-time</span></p>
+            <p class="price"><span class="cur">$</span><span data-count="3900" data-format="comma">3,900</span><span class="per">one-time</span></p>
             <p class="setup">+ optional care plan, $200/month</p>
             <a href="#audit" class="btn btn-outline btn-block">Start with a free audit</a>
             <ul class="features">
@@ -412,7 +419,7 @@
             <span class="badge">Most popular</span>
             <p class="plan">Grow</p>
             <p class="plan-desc">Your site plus the system that keeps the phone ringing.</p>
-            <p class="price"><span class="cur">$</span><span data-count="1200" data-format="comma">0</span><span class="per">/ month</span></p>
+            <p class="price"><span class="cur">$</span><span data-count="1200" data-format="comma">1,200</span><span class="per">/ month</span></p>
             <p class="setup">+ $1,500 one-time setup</p>
             <a href="#audit" class="btn btn-lime btn-block magnetic">Start with a free audit</a>
             <ul class="features">
@@ -429,7 +436,7 @@
           <article class="price-card" data-reveal data-tilt>
             <p class="plan">Scale</p>
             <p class="plan-desc">For businesses ready to add paid growth and more areas.</p>
-            <p class="price"><span class="cur">$</span><span data-count="2500" data-format="comma">0</span><span class="per">/ month</span></p>
+            <p class="price"><span class="cur">$</span><span data-count="2500" data-format="comma">2,500</span><span class="per">/ month</span></p>
             <p class="setup">+ ad spend, paid directly to Google</p>
             <a href="#audit" class="btn btn-outline btn-block">Start with a free audit</a>
             <ul class="features">
@@ -548,29 +555,29 @@
         <form class="audit-form" id="auditForm" novalidate data-reveal>
           <div class="form-inner" id="formInner">
             <div class="field-row">
-              <label class="field"><span>Your name</span><input name="name" type="text" autocomplete="name" required placeholder="Jane Smith" /></label>
-              <label class="field"><span>Business name</span><input name="business" type="text" autocomplete="organization" required placeholder="Smith Plumbing" /></label>
+              <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" type="text" autocomplete="name" required placeholder="Jane Smith" aria-describedby="f-name-err" /><p class="field-err" id="f-name-err"></p></div>
+              <div class="field"><label for="f-biz">Business name</label><input id="f-biz" name="business" type="text" autocomplete="organization" required placeholder="Smith Plumbing" aria-describedby="f-biz-err" /><p class="field-err" id="f-biz-err"></p></div>
             </div>
-            <label class="field"><span>Website (if you have one)</span><input name="website" type="text" inputmode="url" placeholder="smithplumbing.ca" /></label>
+            <div class="field"><label for="f-site">Website (if you have one)</label><input id="f-site" name="website" type="text" inputmode="url" autocomplete="url" placeholder="smithplumbing.ca" /></div>
             <div class="field-row">
-              <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required placeholder="jane@smithplumbing.ca" /></label>
-              <label class="field"><span>Phone</span><input name="phone" type="tel" autocomplete="tel" placeholder="(403) 555-0100" /></label>
+              <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required placeholder="jane@smithplumbing.ca" aria-describedby="f-email-err" /><p class="field-err" id="f-email-err"></p></div>
+              <div class="field"><label for="f-phone">Phone (optional)</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="(403) 555-0100" /></div>
             </div>
             <fieldset class="field">
               <legend>What do you want more of?</legend>
               <div class="choice-chips" id="goalChips">
-                <button type="button" class="choice" data-value="Calls">Calls</button>
-                <button type="button" class="choice" data-value="Bookings">Bookings</button>
-                <button type="button" class="choice" data-value="Quote requests">Quote requests</button>
-                <button type="button" class="choice" data-value="Online sales">Online sales</button>
+                <button type="button" class="choice" data-value="Calls" aria-pressed="false">Calls</button>
+                <button type="button" class="choice" data-value="Bookings" aria-pressed="false">Bookings</button>
+                <button type="button" class="choice" data-value="Quote requests" aria-pressed="false">Quote requests</button>
+                <button type="button" class="choice" data-value="Online sales" aria-pressed="false">Online sales</button>
               </div>
             </fieldset>
-            <p class="form-error" id="formError" role="alert" hidden>Please add your name, business and a valid email.</p>
+            <p class="form-error" id="formError" role="status"></p>
             <button type="submit" class="btn btn-lime btn-lg btn-block magnetic">Send my free audit <i data-lucide="send"></i></button>
             <p class="form-fine">No spam and no sales pressure. Just your report.</p>
           </div>
 
-          <div class="form-success" id="formSuccess" hidden>
+          <div class="form-success" id="formSuccess" tabindex="-1" hidden>
             <div class="success-ico"><i data-lucide="check"></i></div>
             <h3>Thanks, you're on the list.</h3>
             <p>Austin will review your site and send your audit within 3 business days.</p>
@@ -594,15 +601,15 @@
         </div>
         <div class="footer-cols">
           <div>
-            <h4>Company</h4>
+            <h2 class="footer-h">Company</h2>
             <a href="#results">Results</a><a href="#services">Services</a><a href="#pricing">Pricing</a><a href="#about">About</a>
           </div>
           <div>
-            <h4>Areas</h4>
+            <h2 class="footer-h">Areas</h2>
             <a href="#audit">Calgary</a><a href="#audit">Airdrie</a><a href="#audit">Cochrane</a><a href="#audit">Chestermere</a><a href="#audit">Okotoks</a>
           </div>
           <div>
-            <h4>Contact</h4>
+            <h2 class="footer-h">Contact</h2>
             <a href="tel:+14035550142">(403) 555-0142</a>
             <a href="mailto:hello@opengrowth.ca">hello@opengrowth.ca</a>
             <span>Calgary, Alberta</span>
@@ -612,23 +619,23 @@
       <div class="footer-giant" aria-hidden="true">Open Growth</div>
       <div class="footer-bottom">
         <span>© <span id="year">2026</span> Open Growth. All rights reserved.</span>
-        <a href="#top">Back to top ↑</a>
+        <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
       </div>
     </div>
   </footer>
 
   <!-- Mobile sticky CTA -->
-  <div class="mobile-cta">
-    <a href="tel:+14035550142" class="btn btn-ghost-dark"><i data-lucide="phone"></i> Call</a>
+  <div class="mobile-cta" inert>
+    <a href="tel:+14035550142" class="btn btn-ghost-dark" aria-label="Call (403) 555-0142"><i data-lucide="phone"></i> Call</a>
     <a href="#audit" class="btn btn-lime">Free audit</a>
   </div>
 
   <!-- Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-  <script src="main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" defer></script>
+  <script src="main.js" defer></script>
 </body>
 </html>
