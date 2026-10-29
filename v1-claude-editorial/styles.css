@@ -420,13 +420,14 @@ i[data-lucide], svg.lucide { width: 1.05em; height: 1.05em; stroke-width: 2.2; f
 .field { display: grid; gap: 8px; border: 0; margin: 0; padding: 0; min-width: 0; }
 .field label, .field legend { font-size: 14px; font-weight: 600; color: var(--ink-2); padding: 0; margin-bottom: 8px; }
 .field label { margin-bottom: 0; }
-.field input {
+.field input, .field textarea {
   width: 100%; font: inherit; font-size: 16px; padding: 14px 16px; border-radius: 14px;
   border: 1px solid var(--line); background: var(--card); color: var(--ink); transition: border-color .25s, box-shadow .25s;
 }
-.field input::placeholder { color: #6f7368; }
-.field input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(207,242,74,.55); }
-.field input.invalid { border-color: #b3361f; box-shadow: 0 0 0 1px #b3361f; }
+.field textarea { resize: vertical; min-height: 104px; }
+.field input::placeholder, .field textarea::placeholder { color: #6f7368; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(207,242,74,.55); }
+.field input.invalid, .field textarea.invalid { border-color: #b3361f; box-shadow: 0 0 0 1px #b3361f; }
 .field-err { color: #b3361f; font-size: 14px; font-weight: 600; }
 .field-err:empty { display: none; }
 .choice-chips { display: flex; flex-wrap: wrap; gap: 8px; }

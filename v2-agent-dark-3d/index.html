@@ -892,65 +892,27 @@
                 <p class="field-error" id="err-name" aria-live="polite"></p>
               </div>
               <div class="field">
-                <label for="f-business">Business name <span class="req" aria-hidden="true">*</span></label>
-                <input id="f-business" name="business" type="text" autocomplete="organization" required aria-describedby="err-business" />
-                <p class="field-error" id="err-business" aria-live="polite"></p>
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="f-website">Website <span class="opt">(leave blank if you don't have one yet)</span></label>
-              <input id="f-website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.ca" aria-describedby="err-website" />
-              <p class="field-error" id="err-website" aria-live="polite"></p>
-            </div>
-
-            <div class="field-row">
-              <div class="field">
-                <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
+                <label for="f-email">Your email <span class="req" aria-hidden="true">*</span></label>
                 <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="err-email" />
                 <p class="field-error" id="err-email" aria-live="polite"></p>
               </div>
-              <div class="field">
-                <label for="f-phone">Phone <span class="opt">(optional)</span></label>
-                <input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="(403) 555-0000" aria-describedby="err-phone" />
-                <p class="field-error" id="err-phone" aria-live="polite"></p>
-              </div>
             </div>
 
-            <div class="field">
-              <label for="f-city">Where is your business? <span class="req" aria-hidden="true">*</span></label>
-              <div class="select-wrap">
-                <select id="f-city" name="city" required aria-describedby="err-city">
-                  <option value="">Choose a city</option>
-                  <option>Calgary</option>
-                  <option>Airdrie</option>
-                  <option>Cochrane</option>
-                  <option>Chestermere</option>
-                  <option>Okotoks</option>
-                  <option>Somewhere else</option>
-                </select>
-              </div>
-              <p class="field-error" id="err-city" aria-live="polite"></p>
-            </div>
-
-            <fieldset class="field chips">
-              <legend>What do you want more of? <span class="opt">(optional)</span></legend>
-              <label class="chip"><input type="checkbox" name="goals" value="Phone calls" /><span>Phone calls</span></label>
-              <label class="chip"><input type="checkbox" name="goals" value="Bookings" /><span>Bookings</span></label>
-              <label class="chip"><input type="checkbox" name="goals" value="Form leads" /><span>Form leads</span></label>
-              <label class="chip"><input type="checkbox" name="goals" value="Google reviews" /><span>Google reviews</span></label>
-              <label class="chip"><input type="checkbox" name="goals" value="Walk-ins" /><span>Walk-ins</span></label>
+            <fieldset class="field chips" aria-describedby="err-revenue">
+              <legend>How much is your business making right now? <span class="req" aria-hidden="true">*</span></legend>
+              <label class="chip"><input type="radio" name="revenue" value="$0 - $1,000" required /><span>$0 - $1,000</span></label>
+              <label class="chip"><input type="radio" name="revenue" value="$1,000 - $10,000" /><span>$1,000 - $10,000</span></label>
+              <label class="chip"><input type="radio" name="revenue" value="$10,000 - $100,000" /><span>$10,000 - $100,000</span></label>
+              <label class="chip"><input type="radio" name="revenue" value="$100,000 - $1 million" /><span>$100,000 - $1 million</span></label>
+              <label class="chip"><input type="radio" name="revenue" value="$1 million+" /><span>$1 million+</span></label>
+              <p class="field-error" id="err-revenue" aria-live="polite" style="width:100%"></p>
             </fieldset>
 
             <div class="field">
-              <label for="f-message">Anything we should know? <span class="opt">(optional)</span></label>
-              <textarea id="f-message" name="message" rows="3" placeholder="e.g. We get good reviews but the phone is quiet."></textarea>
+              <label for="f-problem">What is the biggest problem you have right now? <span class="req" aria-hidden="true">*</span></label>
+              <textarea id="f-problem" name="problem" rows="4" required placeholder="e.g. The phone is quiet and I don't know why." aria-describedby="err-problem"></textarea>
+              <p class="field-error" id="err-problem" aria-live="polite"></p>
             </div>
-
-            <label class="check-field">
-              <input type="checkbox" name="founding" value="yes" />
-              <span>I'm interested in the <strong>founding client program</strong> (reduced rate in exchange for tracked results and an honest review).</span>
-            </label>
 
             <!-- Honeypot: hidden from people, bots tend to fill it -->
             <div class="hp" aria-hidden="true">
@@ -959,7 +921,7 @@
             </div>
 
             <button class="btn btn-primary btn-lg btn-block magnetic submit-btn" type="submit">
-              <span class="btn-label">Send me my free audit</span>
+              <span class="btn-label">Get my free audit</span>
               <span class="btn-spinner" aria-hidden="true"></span>
               <i data-lucide="send" aria-hidden="true"></i>
             </button>
@@ -1039,6 +1001,8 @@
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" defer></script>
+  <script src="../shared/supabase-config.js"></script>
+  <script src="../shared/lead-capture.js"></script>
   <script src="main.js" defer></script>
 </body>
 </html>

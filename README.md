@@ -33,6 +33,22 @@ The folder deploys as a static site, for example on Vercel:
 vercel deploy
 ```
 
+## Lead capture (Supabase)
+
+Each design's `#audit` form asks four things: name, email, revenue range (five options, `$0 - $1,000` up to `$1 million+`) and the biggest problem right now. Submissions go to a `leads` table in Supabase through `shared/lead-capture.js`.
+
+Setup:
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. Open **SQL Editor**, paste `supabase/leads.sql` and run it. This creates the table and locks it down: the public key can only insert rows, never read, edit or delete them.
+3. Open **Project Settings > API** and copy the project URL and the `anon public` key into `shared/supabase-config.js`. Never use the `service_role` key in this repo.
+
+Until step 3 is done, the forms show an error on submit instead of pretending to send.
+
+The sites load the shared scripts from `../shared/`, so deploy the whole repo, not a single design folder.
+
+Next step, the CRM: the `leads` table has a `crm_synced_at` column ready for a sync job.
+
 ## Branches
 
 - `main`: the current designs

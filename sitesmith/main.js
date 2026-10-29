@@ -727,20 +727,10 @@
 
     var rules = {
       name: function (v) { return v.trim().length >= 2 ? '' : 'Please tell us your name.'; },
-      business: function (v) { return v.trim().length >= 2 ? '' : 'Please add your business name.'; },
       email: function (v) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? '' : 'Please enter a valid email, like you@yourbusiness.ca.';
       },
-      phone: function (v) {
-        var digits = v.replace(/\D/g, '');
-        return !v.trim() || digits.length >= 10 ? '' : 'Please enter a 10-digit phone number, or leave it blank.';
-      },
-      website: function (v) {
-        var s = v.trim();
-        return !s || /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:\d+)?(\/\S*)?$/i.test(s) ? '' :
-          "That doesn't look like a web address. Try yourbusiness.ca, or leave it blank.";
-      },
-      city: function (v) { return v ? '' : "Please choose where you're based."; }
+      problem: function (v) { return v.trim().length >= 3 ? '' : 'Tell us the biggest problem, even in a few words.'; }
     };
 
     function setError(input, msg) {
@@ -756,16 +746,16 @@
       setError(input, msg);
       return !msg;
     }
-    function goalValue() {
-      var picked = $('input[name="goal"]:checked', form);
+    function revenueValue() {
+      var picked = $('input[name="revenue"]:checked', form);
       return picked ? picked.value : '';
     }
-    function checkGoal() {
-      var ok = !!goalValue();
+    function checkRevenue() {
+      var ok = !!revenueValue();
       var fs = $('.field--chips', form);
-      var err = $('#f-goal-err');
+      var err = $('#f-revenue-err');
       if (fs) fs.classList.toggle('is-invalid', !ok);
-      if (err) err.textContent = ok ? '' : 'Pick the one that matters most (or "Not sure yet").';
+      if (err) err.textContent = ok ? '' : 'Pick the range that fits best.';
       return ok;
     }
 
@@ -782,30 +772,9 @@
         if (submitted) checkField(name);
       });
     });
-    $$('input[name="goal"]', form).forEach(function (r) {
-      r.addEventListener('change', function () { if (submitted) checkGoal(); });
+    $$('input[name="revenue"]', form).forEach(function (r) {
+      r.addEventListener('change', function () { if (submitted) checkRevenue(); });
     });
-
-    /* TODO(n8n): connect the audit form to your n8n webhook.
-       1. In n8n, create a Webhook node (POST, JSON) and copy its production URL.
-       2. Paste it into N8N_WEBHOOK_URL below.
-       3. In sendToWebhook(), delete the placeholder Promise and uncomment the fetch().
-       The payload fields are listed in the `data` object built on submit. */
-    var N8N_WEBHOOK_URL = ''; // e.g. 'https://YOUR-N8N-DOMAIN/webhook/audit-request'
-
-    function sendToWebhook(data) {
-      // return fetch(N8N_WEBHOOK_URL, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data)
-      // }).then(function (res) {
-      //   if (!res.ok) throw new Error('Webhook error ' + res.status);
-      //   return res;
-      // });
-      void N8N_WEBHOOK_URL;
-      void data;
-      return new Promise(function (resolve) { w.setTimeout(resolve, 700); }); // placeholder: pretend it sent
-    }
 
     function showSuccess(name) {
       var nameEl = $('#success-name');
@@ -842,7 +811,7 @@
       Object.keys(rules).forEach(function (name) {
         if (!checkField(name) && !firstBad) firstBad = form.elements[name];
       });
-      if (!checkGoal() && !firstBad) firstBad = $('input[name="goal"]', form);
+      if (!checkRevenue() && !firstBad) firstBad = $('input[name="revenue"]', form);
 
       if (firstBad) {
         if (status) status.textContent = 'Please fix the highlighted fields above.';
@@ -857,22 +826,16 @@
 
       var data = {
         name: nameVal,
-        business: form.elements.business.value.trim(),
         email: form.elements.email.value.trim(),
-        phone: form.elements.phone.value.trim(),
-        website: form.elements.website.value.trim(),
-        city: form.elements.city.value,
-        goal: goalValue(),
-        message: form.elements.message.value.trim(),
-        foundingInterest: !!(form.elements.founding && form.elements.founding.checked),
-        source: 'opengrowth.ca audit form',
-        submittedAt: new Date().toISOString()
+        revenue_range: revenueValue(),
+        biggest_problem: form.elements.problem.value.trim(),
+        source: 'sitesmith'
       };
 
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
       form.setAttribute('aria-busy', 'true');
 
-      sendToWebhook(data).then(function () {
+      w.OGLeads.submit(data).then(function () {
         showSuccess(nameVal);
       }).catch(function () {
         if (status) status.textContent = 'Sorry, something went wrong. Please call (403) 555-0142 or email hello@opengrowth.ca.';
@@ -890,7 +853,7 @@
         Object.keys(rules).forEach(function (n) { if (form.elements[n]) setError(form.elements[n], ''); });
         var fs = $('.field--chips', form);
         if (fs) fs.classList.remove('is-invalid');
-        var gErr = $('#f-goal-err');
+        var gErr = $('#f-revenue-err');
         if (gErr) gErr.textContent = '';
         success.hidden = true;
         form.hidden = false;

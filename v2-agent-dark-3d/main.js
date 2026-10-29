@@ -840,30 +840,30 @@
       name: function (v) {
         return v.trim().length >= 2 ? '' : 'Please enter your name.';
       },
-      business: function (v) {
-        return v.trim().length >= 2 ? '' : 'Please enter your business name.';
-      },
-      website: function (v) {
-        v = v.trim();
-        if (!v) return '';
-        return /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:\d+)?(\/\S*)?$/i.test(v) ? '' : 'Please enter a web address like yourbusiness.ca, or leave it blank.';
-      },
       email: function (v) {
         v = v.trim();
-        if (!v) return 'Please enter your email so we can send your report.';
+        if (!v) return 'Please enter your email so we can reach you.';
         return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : "That email doesn't look right. Please check it.";
       },
-      phone: function (v) {
-        v = v.trim();
-        if (!v) return '';
-        var digits = v.replace(/\D/g, '');
-        return (digits.length === 10 || (digits.length === 11 && digits.charAt(0) === '1')) ? '' : 'Please enter a 10-digit phone number, or leave it blank.';
-      },
-      city: function (v) {
-        return v ? '' : 'Please choose where your business is.';
+      problem: function (v) {
+        return v.trim().length >= 3 ? '' : 'Tell us the biggest problem, even in a few words.';
       }
     };
     var names = Object.keys(rules);
+
+    function revenueValue() {
+      var picked = form.querySelector('input[name="revenue"]:checked');
+      return picked ? picked.value : '';
+    }
+    function validateRevenue() {
+      var ok = !!revenueValue();
+      var err = doc.getElementById('err-revenue');
+      if (err) err.textContent = ok ? '' : 'Pick the range that fits best.';
+      return ok;
+    }
+    form.querySelectorAll('input[name="revenue"]').forEach(function (r) {
+      r.addEventListener('change', validateRevenue);
+    });
 
     function field(name) { return form.elements.namedItem(name); }
 
@@ -892,7 +892,7 @@
       var first = (name || '').trim().split(/\s+/)[0];
       if (successMsg) {
         successMsg.textContent = (first ? 'Thanks, ' + first + '. ' : 'Thanks. ') +
-          'Austin will reply within 1 business day, and your written audit will arrive within 3 business days.';
+          'Austin will email you within 1 business day.';
       }
       form.hidden = true;
       if (success) {
@@ -920,6 +920,7 @@
       names.forEach(function (name) {
         if (!validateField(name) && !firstInvalid) firstInvalid = field(name);
       });
+      if (!validateRevenue() && !firstInvalid) firstInvalid = form.querySelector('input[name="revenue"]');
       if (firstInvalid) {
         if (status) status.textContent = 'Please check the highlighted fields.';
         firstInvalid.focus();
@@ -930,39 +931,17 @@
       var hp = field('company_url');
       if (hp && hp.value) { showSuccess(''); return; }
 
-      var data = new FormData(form);
       var payload = {
-        name: String(data.get('name') || '').trim(),
-        business: String(data.get('business') || '').trim(),
-        website: String(data.get('website') || '').trim(),
-        email: String(data.get('email') || '').trim(),
-        phone: String(data.get('phone') || '').trim(),
-        city: String(data.get('city') || ''),
-        goals: data.getAll('goals'),
-        message: String(data.get('message') || '').trim(),
-        foundingClientInterest: data.get('founding') === 'yes',
-        source: 'opengrowth.ca free audit form',
-        submittedAt: new Date().toISOString()
+        name: String(field('name').value || '').trim(),
+        email: String(field('email').value || '').trim(),
+        revenue_range: revenueValue(),
+        biggest_problem: String(field('problem').value || '').trim(),
+        source: 'v2-agent-dark-3d'
       };
 
       setLoading(true);
 
-      /* ------------------------------------------------------------------
-         TODO(n8n): send the request to your n8n Webhook node.
-         1. In n8n, add a "Webhook" trigger node (HTTP Method: POST) and copy its Production URL.
-         2. Replace the simulated request below with:
-
-         fetch('https://YOUR-N8N-DOMAIN/webhook/open-growth-audit', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify(payload)
-         }).then(function (res) {
-           if (!res.ok) throw new Error('Request failed: ' + res.status);
-         })
-
-         3. Enable CORS for your site's domain on the webhook (Webhook node > Options > Allowed Origins).
-         ------------------------------------------------------------------ */
-      var request = new Promise(function (resolve) { setTimeout(resolve, 900); }); // simulated request, no backend yet
+      var request = window.OGLeads.submit(payload);
 
       request.then(function () {
         setLoading(false);

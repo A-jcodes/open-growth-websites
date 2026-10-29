@@ -506,15 +506,16 @@ section { padding: var(--sp-section) 0; }
 .field { display: grid; gap: 8px; }
 .field label { font-size: 14px; font-weight: 500; }
 .field label span { color: var(--muted); font-weight: 400; }
-.field input, .field select {
+.field input, .field select, .field textarea {
   width: 100%; height: 44px; padding: 0 14px; border-radius: var(--r-md); border: 0; background: var(--s1);
   box-shadow: inset 0 0 0 1px var(--line); font-size: 16px; outline: none; transition: box-shadow .2s, background .2s; appearance: none;
 }
+.field textarea { resize: vertical; min-height: 104px; line-height: 1.5; }
 .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23999' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-.field input::placeholder { color: #8a8a8a; }
-.field input:hover, .field select:hover { box-shadow: inset 0 0 0 1px #3a3a3a; }
-.field input:focus, .field select:focus { box-shadow: inset 0 0 0 1px var(--blue), 0 0 0 4px rgba(0,153,255,.18); background: var(--s2); }
-.field.err input { box-shadow: inset 0 0 0 2px var(--g-coral); }
+.field input::placeholder, .field textarea::placeholder { color: #8a8a8a; }
+.field input:hover, .field select:hover, .field textarea:hover { box-shadow: inset 0 0 0 1px #3a3a3a; }
+.field input:focus, .field select:focus, .field textarea:focus { box-shadow: inset 0 0 0 1px var(--blue), 0 0 0 4px rgba(0,153,255,.18); background: var(--s2); }
+.field.err input, .field.err select, .field.err textarea { box-shadow: inset 0 0 0 2px var(--g-coral); }
 .field .msg { font-size: 14px; color: var(--g-coral); display: none; }
 .field .msg::before { content: "! "; font-weight: 700; }
 .field.err .msg { display: block; }
@@ -1184,26 +1185,21 @@ footer { padding: 72px 0 40px; }
           </ul>
         </div>
         <form class="form reveal" id="auditForm" novalidate>
-          <div class="row2">
-            <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required aria-describedby="f-name-msg" /><span class="msg" id="f-name-msg">Enter your name so we know who to send it to.</span></div>
-            <div class="field"><label for="f-biz">Business name</label><input id="f-biz" name="business" autocomplete="organization" required aria-describedby="f-biz-msg" /><span class="msg" id="f-biz-msg">Enter your business name.</span></div>
-          </div>
-          <div class="field"><label for="f-site">Website <span>(or Google profile link)</span></label><input id="f-site" name="website" placeholder="yourbusiness.ca" inputmode="url" autocomplete="url" required aria-describedby="f-site-msg" /><span class="msg" id="f-site-msg">Enter your website address or Google profile link, like yourbusiness.ca.</span></div>
-          <div class="row2">
-            <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-msg" /><span class="msg" id="f-email-msg">Enter an email address like you@yourbusiness.ca.</span></div>
-            <div class="field"><label for="f-tel">Phone <span>(optional)</span></label><input id="f-tel" name="phone" type="tel" autocomplete="tel" /></div>
-          </div>
+          <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required aria-describedby="f-name-msg" /><span class="msg" id="f-name-msg">Enter your name so we know who to reply to.</span></div>
+          <div class="field"><label for="f-email">Your email</label><input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-msg" /><span class="msg" id="f-email-msg">Enter an email address like you@yourbusiness.ca.</span></div>
           <div class="field">
-            <label for="f-ind">Industry</label>
-            <select id="f-ind" name="industry"><option>Clinic</option><option>Restaurant</option><option>Trades supplier</option><option>Other local business</option></select>
+            <label for="f-revenue">How much is your business making right now?</label>
+            <select id="f-revenue" name="revenue" required aria-describedby="f-revenue-msg"><option value="">Choose a range</option><option>$0 - $1,000</option><option>$1,000 - $10,000</option><option>$10,000 - $100,000</option><option>$100,000 - $1 million</option><option>$1 million+</option></select>
+            <span class="msg" id="f-revenue-msg">Pick the range that fits best.</span>
           </div>
+          <div class="field"><label for="f-problem">What is the biggest problem you have right now?</label><textarea id="f-problem" name="problem" rows="4" required placeholder="e.g. The phone is quiet and I don't know why." aria-describedby="f-problem-msg"></textarea><span class="msg" id="f-problem-msg">Tell us the biggest problem, even in a few words.</span></div>
           <button class="btn btn-primary btn-lg" type="submit">Get my free audit <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button>
           <small>No spam. We use your details only to send the audit.</small>
           <p class="sr-only" id="form-status" role="status"></p>
           <div class="form-done" tabindex="-1">
             <div class="ok"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div>
-            <h3 class="headline">Audit request received.</h3>
-            <p>Your report will arrive within 2 business days. We’ll email you if we have a question.</p>
+            <h3 class="headline">Got it, thank you.</h3>
+            <p>We’ll email you within 1 business day.</p>
           </div>
         </form>
       </div>
@@ -1233,6 +1229,8 @@ footer { padding: 72px 0 40px; }
   </div>
 </footer>
 
+<script src="../shared/supabase-config.js"></script>
+  <script src="../shared/lead-capture.js"></script>
 <script>
 (function () {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1436,13 +1434,21 @@ footer { padding: 72px 0 40px; }
     }
     formStatus.textContent = 'Sending your request.';
     submitBtn.disabled = true;
-    /* TODO: send to your form backend here, then run the success step below */
-    setTimeout(function () {
+    window.OGLeads.submit({
+      name: form.elements.name.value.trim(),
+      email: form.elements.email.value.trim(),
+      revenue_range: form.elements.revenue.value,
+      biggest_problem: form.elements.problem.value.trim(),
+      source: 'v3-framer'
+    }).then(function () {
       form.classList.add('done');
-      form.querySelectorAll('input, select, button').forEach(function (el) { el.disabled = true; });
-      formStatus.textContent = 'Audit request received.';
+      form.querySelectorAll('input, select, textarea, button').forEach(function (el) { el.disabled = true; });
+      formStatus.textContent = 'Request received.';
       form.querySelector('.form-done').focus();
-    }, 600);
+    }).catch(function () {
+      submitBtn.disabled = false;
+      formStatus.textContent = 'Sorry, something went wrong. Please call (403) 555-0142 or email hello@opengrowth.ca.';
+    });
   });
 
   document.getElementById('year').textContent = new Date().getFullYear();

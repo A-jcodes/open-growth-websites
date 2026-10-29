@@ -669,31 +669,29 @@
           <div class="form-inner" id="formInner">
             <div class="field-row">
               <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" type="text" autocomplete="name" required placeholder="Jane Smith" aria-describedby="f-name-err" /><p class="field-err" id="f-name-err"></p></div>
-              <div class="field"><label for="f-biz">Business name</label><input id="f-biz" name="business" type="text" autocomplete="organization" required placeholder="Smith Plumbing" aria-describedby="f-biz-err" /><p class="field-err" id="f-biz-err"></p></div>
-            </div>
-            <div class="field"><label for="f-site">Website (if you have one)</label><input id="f-site" name="website" type="text" inputmode="url" autocomplete="url" placeholder="smithplumbing.ca" /></div>
-            <div class="field-row">
-              <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required placeholder="jane@smithplumbing.ca" aria-describedby="f-email-err" /><p class="field-err" id="f-email-err"></p></div>
-              <div class="field"><label for="f-phone">Phone (optional)</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="(403) 555-0100" /></div>
+              <div class="field"><label for="f-email">Your email</label><input id="f-email" name="email" type="email" autocomplete="email" required placeholder="jane@smithplumbing.ca" aria-describedby="f-email-err" /><p class="field-err" id="f-email-err"></p></div>
             </div>
             <fieldset class="field">
-              <legend>What do you want more of?</legend>
-              <div class="choice-chips" id="goalChips">
-                <button type="button" class="choice" data-value="Calls" aria-pressed="false">Calls</button>
-                <button type="button" class="choice" data-value="Bookings" aria-pressed="false">Bookings</button>
-                <button type="button" class="choice" data-value="Quote requests" aria-pressed="false">Quote requests</button>
-                <button type="button" class="choice" data-value="Online sales" aria-pressed="false">Online sales</button>
+              <legend>How much is your business making right now?</legend>
+              <div class="choice-chips" id="revenueChips">
+                <button type="button" class="choice" data-value="$0 - $1,000" aria-pressed="false">$0 - $1,000</button>
+                <button type="button" class="choice" data-value="$1,000 - $10,000" aria-pressed="false">$1,000 - $10,000</button>
+                <button type="button" class="choice" data-value="$10,000 - $100,000" aria-pressed="false">$10,000 - $100,000</button>
+                <button type="button" class="choice" data-value="$100,000 - $1 million" aria-pressed="false">$100,000 - $1 million</button>
+                <button type="button" class="choice" data-value="$1 million+" aria-pressed="false">$1 million+</button>
               </div>
+              <p class="field-err" id="f-revenue-err"></p>
             </fieldset>
+            <div class="field"><label for="f-problem">What is the biggest problem you have right now?</label><textarea id="f-problem" name="problem" rows="4" required placeholder="e.g. The phone is quiet and I don't know why." aria-describedby="f-problem-err"></textarea><p class="field-err" id="f-problem-err"></p></div>
             <p class="form-error" id="formError" role="status"></p>
-            <button type="submit" class="btn btn-lime btn-lg btn-block magnetic">Send my free audit <i data-lucide="send"></i></button>
+            <button type="submit" class="btn btn-lime btn-lg btn-block magnetic">Get my free audit <i data-lucide="send"></i></button>
             <p class="form-fine">No spam and no sales pressure. Just your report.</p>
           </div>
 
           <div class="form-success" id="formSuccess" tabindex="-1" hidden>
             <div class="success-ico"><i data-lucide="check"></i></div>
             <h3>Thanks, you're on the list.</h3>
-            <p>Austin will review your site and send your audit within 3 business days.</p>
+            <p>Austin will email you within 1 business day.</p>
           </div>
         </form>
       </div>
@@ -749,6 +747,8 @@
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" defer></script>
+  <script src="../shared/supabase-config.js"></script>
+  <script src="../shared/lead-capture.js"></script>
   <script src="main.js" defer></script>
 </body>
 </html>

@@ -890,60 +890,30 @@
               <p class="field__err" id="f-name-err"></p>
             </div>
             <div class="field">
-              <label for="f-biz">Business name <span class="req" aria-hidden="true">*</span></label>
-              <input id="f-biz" name="business" type="text" autocomplete="organization" required aria-describedby="f-biz-err">
-              <p class="field__err" id="f-biz-err"></p>
+              <label for="f-email">Your email <span class="req" aria-hidden="true">*</span></label>
+              <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="f-email-err">
+              <p class="field__err" id="f-email-err"></p>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
-                <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="f-email-err">
-                <p class="field__err" id="f-email-err"></p>
-              </div>
-              <div class="field">
-                <label for="f-phone">Phone <span class="opt">(optional)</span></label>
-                <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" aria-describedby="f-phone-err">
-                <p class="field__err" id="f-phone-err"></p>
-              </div>
-            </div>
-            <div class="field">
-              <label for="f-site">Website <span class="opt">(leave blank if you don't have one)</span></label>
-              <input id="f-site" name="website" type="text" inputmode="url" placeholder="yourbusiness.ca" aria-describedby="f-site-err">
-              <p class="field__err" id="f-site-err"></p>
-            </div>
-            <div class="field">
-              <label for="f-city">Where are you based? <span class="req" aria-hidden="true">*</span></label>
-              <select id="f-city" name="city" required aria-describedby="f-city-err">
-                <option value="">Choose a town</option>
-                <option>Calgary</option>
-                <option>Airdrie</option>
-                <option>Cochrane</option>
-                <option>Chestermere</option>
-                <option>Okotoks</option>
-                <option>Somewhere else</option>
-              </select>
-              <p class="field__err" id="f-city-err"></p>
-            </div>
-            <fieldset class="field field--chips" aria-describedby="f-goal-err">
-              <legend>What do you want most? <span class="req" aria-hidden="true">*</span></legend>
+            <fieldset class="field field--chips" aria-describedby="f-revenue-err">
+              <legend>How much is your business making right now? <span class="req" aria-hidden="true">*</span></legend>
               <div class="goal-chips">
-                <label><input type="radio" name="goal" value="More calls" required><span>More calls</span></label>
-                <label><input type="radio" name="goal" value="More bookings"><span>More bookings</span></label>
-                <label><input type="radio" name="goal" value="Rank on Google Maps"><span>Rank on Google Maps</span></label>
-                <label><input type="radio" name="goal" value="A new website"><span>A new website</span></label>
-                <label><input type="radio" name="goal" value="Not sure yet"><span>Not sure yet</span></label>
+                <label><input type="radio" name="revenue" value="$0 - $1,000" required><span>$0 - $1,000</span></label>
+                <label><input type="radio" name="revenue" value="$1,000 - $10,000"><span>$1,000 - $10,000</span></label>
+                <label><input type="radio" name="revenue" value="$10,000 - $100,000"><span>$10,000 - $100,000</span></label>
+                <label><input type="radio" name="revenue" value="$100,000 - $1 million"><span>$100,000 - $1 million</span></label>
+                <label><input type="radio" name="revenue" value="$1 million+"><span>$1 million+</span></label>
               </div>
-              <p class="field__err" id="f-goal-err"></p>
+              <p class="field__err" id="f-revenue-err"></p>
             </fieldset>
             <div class="field">
-              <label for="f-msg">Anything we should know? <span class="opt">(optional)</span></label>
-              <textarea id="f-msg" name="message" rows="3"></textarea>
+              <label for="f-problem">What is the biggest problem you have right now? <span class="req" aria-hidden="true">*</span></label>
+              <textarea id="f-problem" name="problem" rows="4" required aria-describedby="f-problem-err" placeholder="e.g. The phone is quiet and I don't know why."></textarea>
+              <p class="field__err" id="f-problem-err"></p>
             </div>
-            <label class="founding-check"><input type="checkbox" name="founding" value="yes"> <span>I'm interested in a founding client spot</span></label>
             <!-- Honeypot: hidden from people, bots fill it in -->
             <div class="hp" aria-hidden="true"><label for="f-company-url">Leave this empty</label><input id="f-company-url" name="company_url" type="text" tabindex="-1" autocomplete="off"></div>
 
-            <button class="btn btn--yellow btn--lg btn--block magnetic" type="submit">Send me my free audit <i data-lucide="send" aria-hidden="true"></i></button>
+            <button class="btn btn--yellow btn--lg btn--block magnetic" type="submit">Get my free audit <i data-lucide="send" aria-hidden="true"></i></button>
             <p class="form-note">We'll only use your details to send your audit and reply to you.</p>
             <p class="form-status" role="status" aria-live="polite"></p>
           </form>
@@ -951,7 +921,7 @@
           <div class="form-success" id="form-success" hidden tabindex="-1">
             <span class="form-success__icon" aria-hidden="true"><i data-lucide="party-popper"></i></span>
             <h3>Got it, <span id="success-name">thanks</span>!</h3>
-            <p>Your audit request is in. Austin will review your website and Google profile and email your written report within 3 business days.</p>
+            <p>Your details are in. Austin will email you within 1 business day.</p>
             <p>Questions in the meantime? Call <a href="tel:+14035550142">(403) 555-0142</a>.</p>
             <button type="button" class="btn btn--white" id="form-reset">Send another request</button>
           </div>
@@ -995,6 +965,8 @@
   <a class="mobile-cta" href="#audit">Free audit <i data-lucide="arrow-right" aria-hidden="true"></i></a>
 
   <!-- Libraries (pinned versions). The page works without any of them. -->
+  <script src="../shared/supabase-config.js"></script>
+  <script src="../shared/lead-capture.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>

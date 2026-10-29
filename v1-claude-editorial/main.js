@@ -365,16 +365,18 @@
 
   // ---------- Audit form ----------
   const form = document.getElementById('auditForm');
-  const chips = document.querySelectorAll('#goalChips .choice');
+  const chips = document.querySelectorAll('#revenueChips .choice');
+  const revenueErr = document.getElementById('f-revenue-err');
+  const selectedRevenue = () => { const c = [...chips].find((x) => x.classList.contains('selected')); return c ? c.dataset.value : ''; };
   chips.forEach((c) => c.addEventListener('click', () => {
-    c.classList.toggle('selected');
-    c.setAttribute('aria-pressed', c.classList.contains('selected'));
+    chips.forEach((o) => { o.classList.toggle('selected', o === c); o.setAttribute('aria-pressed', o === c); });
+    if (revenueErr) revenueErr.textContent = '';
   }));
 
   const messages = {
     name: 'Enter your name so we know who to send it to.',
-    business: 'Enter your business name.',
     email: 'Enter an email address like you@yourbusiness.ca.',
+    problem: 'Tell us the biggest problem, even in a few words.',
   };
   const checkField = (f) => {
     const v = f.value.trim();
@@ -385,7 +387,7 @@
     if (msg) msg.textContent = bad ? messages[f.name] : '';
     return !bad;
   };
-  const required = form ? ['name', 'business', 'email'].map((n) => form.elements[n]) : [];
+  const required = form ? ['name', 'email', 'problem'].map((n) => form.elements[n]) : [];
   required.forEach((f) => {
     f.addEventListener('blur', () => { if (f.value.trim() || f.getAttribute('aria-invalid')) checkField(f); });
     f.addEventListener('input', () => { if (f.getAttribute('aria-invalid')) checkField(f); });
@@ -395,19 +397,36 @@
     e.preventDefault();
     const err = document.getElementById('formError');
     const bad = required.filter((f) => !checkField(f));
-    err.textContent = bad.length ? (bad.length === 1 ? '1 field needs fixing.' : `${bad.length} fields need fixing.`) : '';
-    if (bad.length) {
-      bad[0].focus();
+    const revenueMissing = !selectedRevenue();
+    if (revenueErr) revenueErr.textContent = revenueMissing ? 'Pick the range that fits best.' : '';
+    const issues = bad.length + (revenueMissing ? 1 : 0);
+    err.textContent = issues ? (issues === 1 ? '1 field needs fixing.' : `${issues} fields need fixing.`) : '';
+    if (issues) {
+      (bad[0] || chips[0]).focus();
       if (animate) gsap.fromTo(form, { x: -8 }, { x: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
       return;
     }
 
-    const data = Object.fromEntries(new FormData(form));
-    data.goals = [...chips].filter((c) => c.classList.contains('selected')).map((c) => c.dataset.value);
-
-    // TODO: send `data` to your n8n webhook or form service, e.g.
-    // await fetch('https://YOUR-N8N-URL/webhook/audit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-    console.info('Audit request', data);
+    const data = {
+      name: form.elements.name.value.trim(),
+      email: form.elements.email.value.trim(),
+      revenue_range: selectedRevenue(),
+      biggest_problem: form.elements.problem.value.trim(),
+      source: 'v1-claude-editorial',
+    };
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const submitHTML = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    try {
+      await window.OGLeads.submit(data);
+    } catch (error) {
+      console.error('Lead form error');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = submitHTML;
+      err.textContent = 'Sorry, something went wrong. Please call (403) 555-0142 or email hello@opengrowth.ca.';
+      return;
+    }
 
     const inner = document.getElementById('formInner');
     const success = document.getElementById('formSuccess');
