@@ -26,14 +26,16 @@
       offer: lead.offer || 'calls-checklist',
       page_url: w.location.href.split('#')[0].slice(0, 500)
     };
+    var headers = {
+      'Content-Type': 'application/json',
+      'apikey': cfg.anonKey,
+      'Prefer': 'return=minimal'   // anon cannot read rows back, so ask for no body
+    };
+    // Legacy anon keys are JWTs and go in Authorization too. New sb_publishable_ keys must not.
+    if (cfg.anonKey.indexOf('sb_') !== 0) headers['Authorization'] = 'Bearer ' + cfg.anonKey;
     return fetch(cfg.url.replace(/\/+$/, '') + '/rest/v1/leads', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': cfg.anonKey,
-        'Authorization': 'Bearer ' + cfg.anonKey,
-        'Prefer': 'return=minimal'   // anon cannot read rows back, so ask for no body
-      },
+      headers: headers,
       body: JSON.stringify(body)
     }).then(function (res) {
       if (!res.ok) throw new Error('Lead save failed: HTTP ' + res.status);
