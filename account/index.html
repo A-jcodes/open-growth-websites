@@ -157,6 +157,36 @@
         </div>
       </div>
 
+      <!-- What Open Growth is doing, and a direct line to the team -->
+      <div class="team-grid">
+        <div class="glass work-card">
+          <p class="card-label">What Open Growth is doing for you</p>
+          <div class="progress" aria-hidden="true"><span id="workBar"></span></div>
+          <p class="muted small" id="workSummary"></p>
+          <ol class="work-list" id="workList"></ol>
+        </div>
+        <div class="glass updates-card">
+          <p class="card-label">Latest updates</p>
+          <ul class="activity-list" id="activityList"></ul>
+        </div>
+      </div>
+
+      <div class="glass chat-card" id="messages">
+        <div class="chat-head">
+          <div>
+            <p class="card-label">Message Open Growth</p>
+            <p class="muted small">Ask a question, share a file link, or tell us what changed. Austin replies within 1 business day.</p>
+          </div>
+        </div>
+        <div class="chat-log" id="chatLog" role="log" aria-live="polite" aria-label="Messages with Open Growth"></div>
+        <form id="chatForm" class="chat-form" novalidate>
+          <label class="sr-only" for="chatInput">Your message</label>
+          <textarea id="chatInput" rows="2" maxlength="4000" placeholder="Write a message to Austin..."></textarea>
+          <button class="btn btn-primary" type="submit" id="chatBtn"><span class="btn-label">Send</span></button>
+        </form>
+        <p class="form-status" id="chatStatus" role="status" aria-live="polite"></p>
+      </div>
+
       <!-- Scan -->
       <div class="glass scan-card">
         <form id="scanForm" novalidate>

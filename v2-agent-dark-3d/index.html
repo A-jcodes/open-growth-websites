@@ -24,6 +24,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="start-modal.css" />
 
   <script type="application/ld+json">
   {
@@ -326,6 +327,7 @@
           var name = input.value.trim();
           if (name.length < 2) { err.textContent = 'Please enter your first name.'; input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
           err.textContent = ''; input.removeAttribute('aria-invalid');
+          if (window.OGStart) { window.OGStart.open({ name: name }); return; }
           var target = document.getElementById('f-name');
           if (target) target.value = name;
           var audit = document.getElementById('audit');
@@ -1084,7 +1086,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" defer></script>
   <script src="../shared/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
   <script src="../shared/lead-capture.js"></script>
+  <script src="start-modal.js" defer></script>
   <script src="main.js" defer></script>
 </body>
 </html>

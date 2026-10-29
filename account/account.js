@@ -162,7 +162,7 @@
   /* ---------- session handling ---------- */
   sb.auth.onAuthStateChange(function (event, session) {
     if (event === 'PASSWORD_RECOVERY') { show('viewRecovery'); return; }
-    if (event === 'SIGNED_OUT') { state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null }; show('viewAuth'); return; }
+    if (event === 'SIGNED_OUT') { try { sb.removeAllChannels(); } catch (e) { /* ignore */ } state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null, work: [], activity: [], messages: [] }; show('viewAuth'); return; }
     if (session && session.user) {
       if (state.loadedFor === session.user.id) return;
       // Defer so we never call Supabase inside its own auth callback
@@ -181,14 +181,103 @@
     Promise.all([
       sb.from('profiles').select('full_name,business_name,website_url').eq('id', user.id).maybeSingle(),
       sb.from('site_scans').select('id,url,score,results,created_at').order('created_at', { ascending: false }).limit(20),
-      sb.from('quote_requests').select('id,services,budget,timeline,status,created_at').order('created_at', { ascending: false }).limit(10)
+      sb.from('quote_requests').select('id,services,budget,timeline,status,created_at').order('created_at', { ascending: false }).limit(10),
+      sb.from('work_items').select('id,title,detail,status,due_date,sort_order').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
+      sb.from('activity_feed').select('id,title,body,created_at').order('created_at', { ascending: false }).limit(12),
+      sb.from('messages').select('id,sender,body,created_at').order('created_at', { ascending: true }).limit(200)
     ]).then(function (all) {
       state.profile = (all[0].data) || {};
       state.scans = (all[1].data) || [];
+      state.work = (all[3].data) || [];
+      state.activity = (all[4].data) || [];
+      state.messages = (all[5].data) || [];
       renderHeader();
       renderScans();
       renderQuotes((all[2].data) || []);
+      renderWork();
+      renderActivity();
+      renderChat();
+      subscribeLive();
+      maybeFirstScan();
     });
+  }
+
+  /* ---------- Open Growth updates and messages ---------- */
+  var WORK_LABEL = { planned: 'Planned', in_progress: 'In progress', done: 'Done' };
+  function renderWork() {
+    var items = state.work || [];
+    var done = items.filter(function (i) { return i.status === 'done'; }).length;
+    $('#workBar').style.width = (items.length ? Math.round(done / items.length * 100) : 0) + '%';
+    $('#workSummary').textContent = items.length ? done + ' of ' + items.length + ' steps done' : 'Your plan will appear here once Austin has reviewed your answers.';
+    $('#workList').innerHTML = items.map(function (i) {
+      var mark = i.status === 'done' ? '&#10003;' : i.status === 'in_progress' ? '&bull;' : '';
+      return '<li class="' + esc(i.status) + '"><span class="work-dot" aria-hidden="true">' + mark + '</span><div><strong>' + esc(i.title) + '</strong>' +
+        (i.detail ? '<span class="muted">' + esc(i.detail) + '</span>' : '') + (i.due_date ? '<span class="muted small">Target: ' + esc(i.due_date) + '</span>' : '') +
+        '</div><span class="pill ' + esc(i.status) + '">' + esc(WORK_LABEL[i.status] || i.status) + '</span></li>';
+    }).join('');
+  }
+  function renderActivity() {
+    var list = state.activity || [];
+    $('#activityList').innerHTML = list.length ? list.map(function (a) {
+      return '<li><strong>' + esc(a.title) + '</strong><time datetime="' + esc(a.created_at) + '">' + esc(fmtDate(a.created_at)) + '</time>' + (a.body ? '<p>' + esc(a.body) + '</p>' : '') + '</li>';
+    }).join('') : '<li><p>No updates yet.</p></li>';
+  }
+  function renderChat() {
+    var log = $('#chatLog');
+    var nearBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
+    var list = state.messages || [];
+    log.innerHTML = list.length ? list.map(function (m) {
+      return '<div class="bubble ' + (m.sender === 'team' ? 'team' : 'customer') + '">' + esc(m.body) + '<time datetime="' + esc(m.created_at) + '">' + (m.sender === 'team' ? 'Open Growth &middot; ' : '') + esc(fmtDate(m.created_at)) + '</time></div>';
+    }).join('') : '<p class="chat-empty">No messages yet. Say hello, or ask us anything about your website.</p>';
+    if (nearBottom || list.length <= 1) log.scrollTop = log.scrollHeight;
+  }
+  function loadMessages() { return sb.from('messages').select('id,sender,body,created_at').order('created_at', { ascending: true }).limit(200).then(function (r) { if (r.data) { state.messages = r.data; renderChat(); } }); }
+  function loadWork() { return sb.from('work_items').select('id,title,detail,status,due_date,sort_order').order('sort_order', { ascending: true }).order('created_at', { ascending: true }).then(function (r) { if (r.data) { state.work = r.data; renderWork(); } }); }
+  function loadActivity() { return sb.from('activity_feed').select('id,title,body,created_at').order('created_at', { ascending: false }).limit(12).then(function (r) { if (r.data) { state.activity = r.data; renderActivity(); } }); }
+  function subscribeLive() {
+    try {
+      sb.removeAllChannels();
+      var uid = state.user.id;
+      sb.channel('og-' + uid)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: 'user_id=eq.' + uid }, function () { loadMessages(); })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'work_items', filter: 'user_id=eq.' + uid }, function () { loadWork(); })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'activity_feed', filter: 'user_id=eq.' + uid }, function () { loadActivity(); })
+        .subscribe();
+    } catch (e) { /* live updates are a bonus; the page still works without them */ }
+  }
+  // Backup for live updates: quietly refresh every 15 seconds while the dashboard is open
+  window.setInterval(function () {
+    if (state.user && !document.hidden && !$('#viewDash').hidden) { loadMessages(); loadWork(); loadActivity(); }
+  }, 15000);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && state.user && !$('#viewDash').hidden) { loadMessages(); loadWork(); loadActivity(); }
+  });
+  $('#chatForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var input = $('#chatInput'), status = $('#chatStatus'), text = input.value.trim();
+    if (!text) { say(status, 'Write a message first.', 'error'); input.focus(); return; }
+    say(status, '');
+    busy($('#chatBtn'), true, 'Sending...');
+    sb.from('messages').insert({ body: text }).then(function (r) {
+      busy($('#chatBtn'), false);
+      if (r.error) { say(status, 'We could not send that. Please try again.', 'error'); return; }
+      input.value = '';
+      return loadMessages();
+    }).catch(function () { busy($('#chatBtn'), false); say(status, 'We could not send that. Please try again.', 'error'); });
+  });
+  $('#chatInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); $('#chatForm').requestSubmit(); }
+  });
+
+  // First visit: scan the website they gave us in the pop-up straight away
+  function maybeFirstScan() {
+    var site = (state.profile && state.profile.website_url) || '';
+    var key = 'og-firstscan-' + state.user.id, done = false;
+    try { done = window.sessionStorage.getItem(key) === '1'; } catch (e) { /* ignore */ }
+    if (state.scans.length || !site || done) return;
+    try { window.sessionStorage.setItem(key, '1'); } catch (e) { /* ignore */ }
+    $('#scanUrl').value = site;
+    $('#scanForm').requestSubmit();
   }
   function firstName() { var n = (state.profile && state.profile.full_name) || ''; return n.trim().split(/\s+/)[0] || ''; }
   function renderHeader() {
@@ -319,7 +408,8 @@
       metric('Blocking time', m.tbt, 'mobile, under 200 ms is good') +
       metric('First paint', m.fcp, 'mobile') +
       metric('Google SEO score', m.seo, 'from Lighthouse', band(m.seo)) +
-      metric('Accessibility', m.accessibility, 'from Lighthouse', band(m.accessibility));
+      metric('Accessibility', m.accessibility, 'from Lighthouse', band(m.accessibility)) +
+      metric('Best practices', m.bestPractices, 'from Lighthouse', band(m.bestPractices));
     $('#speedWrap').innerHTML = html;
   }
   var ICON = { pass: 'check', warn: 'alert-triangle', fail: 'x' };

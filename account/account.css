@@ -59,6 +59,39 @@ body.acct { min-height: 100vh; background: var(--bg); }
 .dash-head { margin-bottom: 26px; }
 .dash-head .h2 { margin-bottom: 8px; }
 .glass { backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); }
+/* team updates, work progress and messages */
+.team-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; margin-bottom: 18px; align-items: start; }
+.work-card, .updates-card, .chat-card { padding: clamp(20px, 3vw, 28px); border-radius: var(--radius); }
+.progress { height: 8px; border-radius: 8px; background: rgba(255, 255, 255, 0.08); overflow: hidden; margin: 2px 0 10px; }
+.progress span { display: block; height: 100%; width: 0; border-radius: 8px; background: linear-gradient(90deg, #a98bff, #3ee0ff); transition: width 0.8s var(--ease); }
+.work-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 12px; }
+.work-list li { display: grid; grid-template-columns: 30px 1fr auto; gap: 12px; align-items: start; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.03); }
+.work-dot { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 0.8rem; border: 2px solid var(--dim); color: var(--dim); }
+.work-list li.in_progress .work-dot { border-color: var(--cyan); color: var(--cyan); animation: pulse 1.6s ease-in-out infinite; }
+.work-list li.done .work-dot { background: var(--green); border-color: var(--green); color: #06060b; }
+.work-list strong { display: block; }
+.work-list .muted { font-size: 0.9rem; }
+.pill.in_progress { color: var(--cyan); border-color: rgba(62, 224, 255, 0.4); }
+.pill.planned { color: var(--dim); }
+.pill.done { color: var(--green); border-color: rgba(78, 230, 166, 0.4); }
+.activity-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; position: relative; }
+.activity-list li { position: relative; padding-left: 22px; display: grid; gap: 2px; }
+.activity-list li::before { content: ""; position: absolute; left: 3px; top: 7px; width: 9px; height: 9px; border-radius: 50%; background: var(--violet); box-shadow: 0 0 0 4px rgba(143, 123, 255, 0.18); }
+.activity-list time { font-family: var(--f-mono); font-size: 0.74rem; color: var(--dim); }
+.activity-list p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+.chat-card { margin-bottom: 28px; }
+.chat-log { display: grid; gap: 10px; max-height: 340px; overflow-y: auto; padding: 6px 4px 12px; margin: 10px 0 8px; }
+.bubble { max-width: 82%; padding: 11px 15px; border-radius: 16px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bubble time { display: block; margin-top: 4px; font-size: 0.7rem; opacity: 0.65; font-family: var(--f-mono); }
+.bubble.team { justify-self: start; background: rgba(255, 255, 255, 0.07); border: 1px solid var(--line); border-bottom-left-radius: 5px; }
+.bubble.customer { justify-self: end; color: #0a0916; background: var(--grad-btn); border-bottom-right-radius: 5px; }
+.chat-empty { text-align: center; color: var(--dim); padding: 18px 0; }
+.chat-form { display: flex; gap: 10px; align-items: flex-end; }
+.chat-form textarea { flex: 1; min-width: 0; resize: vertical; min-height: 52px; max-height: 160px; padding: 13px 16px; border-radius: 14px; border: 1px solid var(--line-2); background: rgba(6, 6, 11, 0.6); color: inherit; font: inherit; }
+.chat-form textarea:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 4px rgba(143, 123, 255, 0.2); }
+@media (max-width: 900px) { .team-grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .work-list li { grid-template-columns: 30px 1fr; } .work-list .pill { grid-column: 2; justify-self: start; } .chat-form { flex-direction: column; align-items: stretch; } }
+
 .scan-card { padding: clamp(20px, 3vw, 32px); border-radius: var(--radius); margin-bottom: 28px; }
 .scan-label { display: block; font-weight: 700; margin-bottom: 10px; }
 .scan-row { display: flex; gap: 12px; flex-wrap: wrap; }
