@@ -657,6 +657,33 @@ footer { padding: 72px 0 40px; }
 .opt input:checked + span::before { box-shadow: inset 0 0 0 2px var(--blue); background: radial-gradient(circle, var(--blue) 0 5px, transparent 6px); }
 .opt input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
 .opts.err .opt span { box-shadow: inset 0 0 0 1px var(--g-coral); }
+
+/* Multicolour edge: a quiet hint on the sign-up card, a brighter one on the submit button */
+@property --og-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes og-edge-spin { to { --og-angle: 360deg; } }
+.cta .form { position: relative; }
+.cta .form::before, .cta .form::after {
+  content: ""; position: absolute; inset: -2px; padding: 2px; border-radius: inherit; pointer-events: none;
+  background: conic-gradient(from var(--og-angle), #ff6ec7, #ffb86b, #ffe66b, #6bffb3, #6bc7ff, #a98bff, #ff6ec7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: og-edge-spin 12s linear infinite;
+}
+.cta .form::before { opacity: 0.4; }
+.cta .form::after { filter: blur(8px); opacity: 0.2; transform: translateY(4px); }
+.cta .form button[type="submit"] { position: relative; }
+.cta .form button[type="submit"]::before, .cta .form button[type="submit"]::after {
+  content: ""; position: absolute; inset: -2px; padding: 2px; border-radius: inherit; pointer-events: none;
+  background: conic-gradient(from var(--og-angle), #ff6ec7, #ffb86b, #ffe66b, #6bffb3, #6bc7ff, #a98bff, #ff6ec7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: og-edge-spin 12s linear infinite;
+}
+.cta .form button[type="submit"]::before { opacity: 0.95; }
+.cta .form button[type="submit"]::after { filter: blur(9px); opacity: 0.6; transform: translateY(5px); }
+@media (prefers-reduced-motion: reduce) { .cta .form::before, .cta .form::after, .cta .form button[type="submit"]::before, .cta .form button[type="submit"]::after { animation: none; } }
 .og-cta { padding: 0 0 clamp(32px, 6vw, 64px); }
 .og-cta__box { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: center; justify-content: space-between; background: var(--s2); border-radius: var(--r-xl); box-shadow: var(--edge); padding: clamp(24px, 4vw, 44px); }
 .og-cta__box h2 { margin: 8px 0; }

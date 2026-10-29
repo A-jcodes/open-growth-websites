@@ -1639,3 +1639,30 @@ html.lenis, html.lenis body { height: auto; }
 #audit-form .chips .chip span { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 10px 18px; border: 1.5px solid rgba(255, 255, 255, 0.4); color: var(--text); font-weight: 600; }
 #audit-form .chips .chip span::before { content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.6); transition: border-color 0.2s, background 0.2s; }
 #audit-form .chips .chip input:checked + span::before { border-color: #0a0916; background: radial-gradient(circle, #0a0916 0 4px, transparent 5px); }
+
+/* Multicolour edge: a quiet hint on the sign-up card, a brighter one on the submit button */
+@property --og-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes og-edge-spin { to { --og-angle: 360deg; } }
+.audit-section .form-card { position: relative; }
+.audit-section .form-card::before, .audit-section .form-card::after {
+  content: ""; position: absolute; inset: -2px; padding: 2px; border-radius: inherit; pointer-events: none;
+  background: conic-gradient(from var(--og-angle), #ff6ec7, #ffb86b, #ffe66b, #6bffb3, #6bc7ff, #a98bff, #ff6ec7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: og-edge-spin 12s linear infinite;
+}
+.audit-section .form-card::before { opacity: 0.4; }
+.audit-section .form-card::after { filter: blur(8px); opacity: 0.2; transform: translateY(4px); }
+.audit-section .audit-form .submit-btn { position: relative; }
+.audit-section .audit-form .submit-btn::before, .audit-section .audit-form .submit-btn::after {
+  content: ""; position: absolute; inset: -2px; padding: 2px; border-radius: inherit; pointer-events: none;
+  background: conic-gradient(from var(--og-angle), #ff6ec7, #ffb86b, #ffe66b, #6bffb3, #6bc7ff, #a98bff, #ff6ec7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: og-edge-spin 12s linear infinite;
+}
+.audit-section .audit-form .submit-btn::before { opacity: 0.95; }
+.audit-section .audit-form .submit-btn::after { filter: blur(9px); opacity: 0.6; transform: translateY(5px); }
+@media (prefers-reduced-motion: reduce) { .audit-section .form-card::before, .audit-section .form-card::after, .audit-section .audit-form .submit-btn::before, .audit-section .audit-form .submit-btn::after { animation: none; } }
