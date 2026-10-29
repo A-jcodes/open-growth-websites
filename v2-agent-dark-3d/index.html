@@ -287,6 +287,55 @@
       </button>
     </div>
 
+    <!-- ============ START CTA ============ -->
+    <section class="og-spot" id="start" aria-labelledby="spot-title">
+      <div class="container">
+        <div class="spot-card" data-reveal>
+          <div class="spot-copy">
+            <p class="spot-badge"><span class="spot-dot" aria-hidden="true"></span> Free &middot; No call required &middot; Instant</p>
+            <h2 id="spot-title" class="spot-title">One small fix could bring you more calls.</h2>
+            <p class="spot-lede">Grab your free Calgary Calls Checklist and see exactly where your website is leaking calls: Google Maps, mobile speed and follow-up. Austin also reads your answers and replies within 1 business day.</p>
+          </div>
+          <form class="spot-form" id="spotForm" novalidate>
+            <label for="spot-name">First, what's your name?</label>
+            <div class="spot-row">
+              <input id="spot-name" type="text" autocomplete="given-name" placeholder="Jack" aria-describedby="spot-err" />
+              <button class="btn btn-primary btn-lg" type="submit">Start <span aria-hidden="true">&rarr;</span></button>
+            </div>
+            <p class="spot-note">Takes about 40 seconds. We never share your details.</p>
+            <p class="field-error" id="spot-err" aria-live="polite"></p>
+          </form>
+        </div>
+        <p class="spot-trust-label">Built for local service businesses</p>
+        <ul class="spot-trust">
+          <li>Based in Calgary</li>
+          <li>Published prices</li>
+          <li>60-second lead follow-up</li>
+          <li>Local SEO</li>
+        </ul>
+      </div>
+    </section>
+    <script>
+      (function () {
+        var f = document.getElementById('spotForm');
+        if (!f) return;
+        f.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var input = document.getElementById('spot-name');
+          var err = document.getElementById('spot-err');
+          var name = input.value.trim();
+          if (name.length < 2) { err.textContent = 'Please enter your first name.'; input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
+          err.textContent = ''; input.removeAttribute('aria-invalid');
+          var target = document.getElementById('f-name');
+          if (target) target.value = name;
+          var audit = document.getElementById('audit');
+          var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (audit) audit.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+          window.setTimeout(function () { var em = document.getElementById('f-email'); if (em) em.focus({ preventScroll: true }); }, 800);
+        });
+      })();
+    </script>
+
     <!-- ============ HOW IT WORKS ============ -->
     <section class="section" id="how" aria-labelledby="how-title">
       <div class="container">

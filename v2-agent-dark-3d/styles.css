@@ -1670,3 +1670,31 @@ html.lenis, html.lenis body { height: auto; }
 /* Account link in the header and the account band */
 .og-cta__actions { display: flex; gap: 12px; flex-wrap: wrap; }
 @media (max-width: 1180px) { .header-login { display: none; } }
+
+/* Start CTA: a glowing card that pulls the eye, with a one-question form */
+.og-spot { padding: clamp(28px, 5vw, 64px) 0 clamp(12px, 2vw, 24px); position: relative; }
+.spot-card { position: relative; display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(24px, 4vw, 60px); align-items: center; padding: clamp(28px, 4.5vw, 56px); border-radius: 30px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)), var(--panel-solid);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.09) inset, 0 50px 150px -50px rgba(255, 110, 170, 0.5), 0 30px 100px -50px rgba(143, 123, 255, 0.55); }
+.spot-card::before { content: ""; position: absolute; inset: -1px; padding: 1.5px; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(115deg, #ff6ea8, #a98bff 55%, #6bc7ff);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.spot-card::after { content: ""; position: absolute; left: 6%; right: 6%; top: -50px; height: 160px; z-index: -1; pointer-events: none; filter: blur(34px);
+  background: radial-gradient(closest-side, rgba(255, 110, 170, 0.32), rgba(143, 123, 255, 0.18) 60%, transparent); }
+.spot-badge { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 18px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line-2); background: rgba(255, 255, 255, 0.05); font-family: var(--f-mono); font-size: 0.78rem; color: var(--muted); }
+.spot-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(78, 230, 166, 0.18); }
+.spot-title { margin: 0 0 16px; font-family: var(--f-display); font-weight: 600; font-size: clamp(1.9rem, 4.3vw, 3.3rem); line-height: 1.04; letter-spacing: -0.025em; }
+.spot-lede { margin: 0; color: var(--muted); max-width: 52ch; }
+.spot-form { padding: clamp(18px, 2.4vw, 26px); border-radius: 22px; background: rgba(6, 6, 11, 0.55); border: 1px solid var(--line); box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.7); }
+.spot-form label { display: block; font-weight: 800; margin-bottom: 12px; }
+.spot-row { display: flex; gap: 10px; }
+.spot-row input { flex: 1; min-width: 0; padding: 15px 18px; border-radius: 14px; border: 1px solid var(--line-2); background: rgba(255, 255, 255, 0.04); font-size: 1.05rem; transition: border-color 0.25s, box-shadow 0.25s; }
+.spot-row input::placeholder { color: var(--dim); }
+.spot-row input:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 4px rgba(143, 123, 255, 0.2); }
+.spot-note { margin: 12px 0 0; font-family: var(--f-mono); font-size: 0.76rem; color: var(--dim); }
+.spot-form .field-error { margin: 6px 0 0; }
+.spot-trust-label { margin: 34px 0 14px; text-align: center; font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+.spot-trust { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.spot-trust li { padding: 9px 18px; border-radius: 999px; border: 1px solid var(--line-2); background: rgba(255, 255, 255, 0.04); font-weight: 600; font-size: 0.9rem; }
+@media (max-width: 860px) { .spot-card { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .spot-row { flex-direction: column; } .spot-row .btn { width: 100%; } }
