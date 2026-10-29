@@ -1666,3 +1666,7 @@ html.lenis, html.lenis body { height: auto; }
 .audit-section .audit-form .submit-btn::before { opacity: 0.95; }
 .audit-section .audit-form .submit-btn::after { filter: blur(9px); opacity: 0.6; transform: translateY(5px); }
 @media (prefers-reduced-motion: reduce) { .audit-section .form-card::before, .audit-section .form-card::after, .audit-section .audit-form .submit-btn::before, .audit-section .audit-form .submit-btn::after { animation: none; } }
+
+/* Account link in the header and the account band */
+.og-cta__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 1180px) { .header-login { display: none; } }

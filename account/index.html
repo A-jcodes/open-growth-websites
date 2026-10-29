@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Your Account | Open Growth</title>
+  <meta name="description" content="Sign in to see your website score, fix list and quote requests." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%238f7bff'/%3E%3Cstop offset='1' stop-color='%233ee0ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%2306060b'/%3E%3Cpath d='M12 46 L26 32 L36 40 L52 18' fill='none' stroke='url(%23g)' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../v2-agent-dark-3d/styles.css" />
+  <link rel="stylesheet" href="account.css" />
+</head>
+<body class="acct">
+  <div class="acct-bg" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span><span class="grid"></span></div>
+
+  <header class="acct-top">
+    <div class="container acct-top-inner">
+      <a class="logo" href="../v2-agent-dark-3d/" aria-label="Open Growth, back to the website">
+        <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <defs><linearGradient id="logoGrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#8f7bff" /><stop offset="1" stop-color="#3ee0ff" /></linearGradient></defs>
+          <rect x="1" y="1" width="30" height="30" rx="9" fill="none" stroke="rgba(255,255,255,.14)" />
+          <path d="M7 22 L13.5 15.5 L18 19 L25 10" fill="none" stroke="url(#logoGrad)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="25" cy="10" r="2.2" fill="#3ee0ff" />
+        </svg>
+        <span class="logo-text">Open<span>Growth</span></span>
+      </a>
+      <div class="acct-top-actions">
+        <a class="btn btn-ghost btn-sm" href="../v2-agent-dark-3d/">Back to site</a>
+        <button class="btn btn-primary btn-sm" id="signOutBtn" type="button" hidden>Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app" class="container">
+
+    <!-- Loading -->
+    <section id="viewLoading" class="acct-center" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="muted">Loading your account...</p>
+    </section>
+
+    <!-- Sign up / log in -->
+    <section id="viewAuth" class="auth-grid" hidden aria-labelledby="authTitle">
+      <div class="auth-copy">
+        <p class="kicker">Your account</p>
+        <h1 id="authTitle" class="h2">See exactly what is costing you calls.</h1>
+        <p class="lede">Create a free account, add your website, and get a scored report in about a minute. Then ask for a quote when you are ready.</p>
+        <ul class="auth-points">
+          <li><i data-lucide="check" aria-hidden="true"></i> Score out of 100 for SEO, speed and local search</li>
+          <li><i data-lucide="check" aria-hidden="true"></i> A ranked fix list in plain English</li>
+          <li><i data-lucide="check" aria-hidden="true"></i> Re-scan any time and watch your score climb</li>
+          <li><i data-lucide="check" aria-hidden="true"></i> Request a quote from the same page</li>
+        </ul>
+      </div>
+
+      <div class="auth-card glass">
+        <div class="tabs" role="tablist" aria-label="Account">
+          <button class="tab is-active" role="tab" id="tabSignup" aria-selected="true" aria-controls="panelSignup" type="button">Create account</button>
+          <button class="tab" role="tab" id="tabLogin" aria-selected="false" aria-controls="panelLogin" type="button">Log in</button>
+        </div>
+
+        <!-- Create account -->
+        <div id="panelSignup" role="tabpanel" aria-labelledby="tabSignup">
+          <form id="signupForm" class="audit-form" novalidate>
+            <div class="field">
+              <label for="su-name">Your name</label>
+              <input id="su-name" name="full_name" type="text" autocomplete="name" required aria-describedby="su-name-err" />
+              <p class="field-error" id="su-name-err" aria-live="polite"></p>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="su-biz">Business name</label>
+                <input id="su-biz" name="business_name" type="text" autocomplete="organization" required aria-describedby="su-biz-err" />
+                <p class="field-error" id="su-biz-err" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="su-site">Website <span class="opt">(optional)</span></label>
+                <input id="su-site" name="website_url" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.ca" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="su-email">Email</label>
+              <input id="su-email" name="email" type="email" autocomplete="email" required aria-describedby="su-email-err" />
+              <p class="field-error" id="su-email-err" aria-live="polite"></p>
+            </div>
+            <div class="field">
+              <label for="su-pass">Password <span class="opt">(8 characters or more)</span></label>
+              <div class="pass-wrap">
+                <input id="su-pass" name="password" type="password" autocomplete="new-password" minlength="8" required aria-describedby="su-pass-err" />
+                <button class="pass-toggle" type="button" data-toggle="su-pass" aria-label="Show password">Show</button>
+              </div>
+              <p class="field-error" id="su-pass-err" aria-live="polite"></p>
+            </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit" id="signupBtn">Create my free account</button>
+            <p class="form-status" id="signupStatus" role="status" aria-live="polite"></p>
+            <p class="small-note">We only use your details to run your reports and reply to you.</p>
+          </form>
+
+          <div id="confirmNotice" class="notice" hidden tabindex="-1">
+            <div class="notice-icon" aria-hidden="true"><i data-lucide="mail-check"></i></div>
+            <h2 class="h3">Check your email</h2>
+            <p>We sent a confirmation link to <strong id="confirmEmail"></strong>. Click it to finish creating your account, then come back and log in.</p>
+            <p class="small-note">Nothing yet? Check spam, then <button class="link-btn" type="button" id="resendBtn">send it again</button>.</p>
+            <p class="form-status" id="resendStatus" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <!-- Log in -->
+        <div id="panelLogin" role="tabpanel" aria-labelledby="tabLogin" hidden>
+          <form id="loginForm" class="audit-form" novalidate>
+            <div class="field">
+              <label for="li-email">Email</label>
+              <input id="li-email" name="email" type="email" autocomplete="email" required aria-describedby="li-email-err" />
+              <p class="field-error" id="li-email-err" aria-live="polite"></p>
+            </div>
+            <div class="field">
+              <label for="li-pass">Password</label>
+              <div class="pass-wrap">
+                <input id="li-pass" name="password" type="password" autocomplete="current-password" required aria-describedby="li-pass-err" />
+                <button class="pass-toggle" type="button" data-toggle="li-pass" aria-label="Show password">Show</button>
+              </div>
+              <p class="field-error" id="li-pass-err" aria-live="polite"></p>
+            </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit" id="loginBtn">Log in</button>
+            <p class="form-status" id="loginStatus" role="status" aria-live="polite"></p>
+            <p class="small-note"><button class="link-btn" type="button" id="forgotBtn">Forgot your password?</button></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Choose a new password (after the reset email link) -->
+    <section id="viewRecovery" class="acct-center" hidden aria-labelledby="recTitle">
+      <div class="auth-card glass narrow">
+        <h1 id="recTitle" class="h3">Choose a new password</h1>
+        <form id="recoveryForm" class="audit-form" novalidate>
+          <div class="field">
+            <label for="rc-pass">New password <span class="opt">(8 characters or more)</span></label>
+            <input id="rc-pass" name="password" type="password" autocomplete="new-password" minlength="8" required />
+          </div>
+          <button class="btn btn-primary btn-lg btn-block" type="submit">Save new password</button>
+          <p class="form-status" id="recoveryStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="viewDash" hidden aria-labelledby="dashTitle">
+      <div class="dash-head">
+        <div>
+          <p class="kicker">Your dashboard</p>
+          <h1 id="dashTitle" class="h2">Welcome back<span id="dashName"></span>.</h1>
+          <p class="lede" id="dashSub">Add your website below and we will score it.</p>
+        </div>
+      </div>
+
+      <!-- Scan -->
+      <div class="glass scan-card">
+        <form id="scanForm" novalidate>
+          <label for="scanUrl" class="scan-label">Your website address</label>
+          <div class="scan-row">
+            <input id="scanUrl" name="url" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.ca" required />
+            <button class="btn btn-primary btn-lg" type="submit" id="scanBtn"><span class="btn-label">Scan my website</span></button>
+          </div>
+          <p class="form-status" id="scanStatus" role="status" aria-live="polite"></p>
+        </form>
+        <ol class="scan-steps" id="scanSteps" hidden>
+          <li>Opening your page</li>
+          <li>Checking on-page SEO</li>
+          <li>Checking local search signals</li>
+          <li>Testing speed with Google</li>
+          <li>Scoring your results</li>
+        </ol>
+      </div>
+
+      <!-- Empty state -->
+      <div id="emptyState" class="glass empty" hidden>
+        <div class="notice-icon" aria-hidden="true"><i data-lucide="radar"></i></div>
+        <h2 class="h3">No scans yet</h2>
+        <p class="muted">Enter your website above. The first scan takes about a minute.</p>
+      </div>
+
+      <!-- Results -->
+      <div id="results" hidden>
+        <div class="result-top">
+          <div class="glass score-card">
+            <p class="card-label">Overall score</p>
+            <div class="ring" id="mainRing" role="img" aria-label="Overall score"></div>
+            <p class="score-verdict" id="scoreVerdict"></p>
+            <p class="muted small" id="scoreMeta"></p>
+          </div>
+          <div class="glass cats-card">
+            <p class="card-label">Score by area</p>
+            <div class="cats" id="cats"></div>
+          </div>
+          <div class="glass first-card">
+            <p class="card-label">Fix these first</p>
+            <ol class="first-list" id="firstList"></ol>
+          </div>
+        </div>
+
+        <h2 class="h3 sec-title">Speed and Core Web Vitals</h2>
+        <div id="speedWrap" class="metrics"></div>
+
+        <h2 class="h3 sec-title">Everything we checked</h2>
+        <div class="filter" role="group" aria-label="Filter checks">
+          <button class="chipbtn is-active" type="button" data-filter="all">All</button>
+          <button class="chipbtn" type="button" data-filter="fail">Fix now</button>
+          <button class="chipbtn" type="button" data-filter="warn">Improve</button>
+          <button class="chipbtn" type="button" data-filter="pass">Passed</button>
+        </div>
+        <div class="checks" id="checks"></div>
+      </div>
+
+      <!-- History -->
+      <div id="historyWrap" hidden>
+        <h2 class="h3 sec-title">Your scans over time</h2>
+        <div class="glass history">
+          <div class="spark" id="spark" role="img" aria-label="Score history chart"></div>
+          <ul class="scan-list" id="scanList"></ul>
+        </div>
+      </div>
+
+      <!-- Quote -->
+      <h2 class="h3 sec-title" id="quoteTitle">Request a quote</h2>
+      <div class="quote-grid">
+        <div class="glass quote-card">
+          <form id="quoteForm" class="audit-form" novalidate>
+            <fieldset class="field chips">
+              <legend>What do you need help with?</legend>
+              <label class="chip"><input type="checkbox" name="services" value="New website" /><span>New website</span></label>
+              <label class="chip"><input type="checkbox" name="services" value="Local SEO" /><span>Local SEO</span></label>
+              <label class="chip"><input type="checkbox" name="services" value="Google Business Profile" /><span>Google Business Profile</span></label>
+              <label class="chip"><input type="checkbox" name="services" value="Lead follow-up" /><span>Lead follow-up</span></label>
+              <label class="chip"><input type="checkbox" name="services" value="Ongoing care" /><span>Ongoing care</span></label>
+              <p class="field-error" id="q-services-err" aria-live="polite" style="width:100%"></p>
+            </fieldset>
+            <div class="field-row">
+              <div class="field">
+                <label for="q-budget">Budget</label>
+                <div class="select-wrap">
+                  <select id="q-budget" name="budget">
+                    <option value="">Choose one</option>
+                    <option>Under $1,500</option><option>$1,500 - $3,000</option><option>$3,000 - $6,000</option><option>$6,000+</option><option>Not sure yet</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="q-timeline">When do you want to start?</label>
+                <div class="select-wrap">
+                  <select id="q-timeline" name="timeline">
+                    <option value="">Choose one</option>
+                    <option>As soon as possible</option><option>Within a month</option><option>1 - 3 months</option><option>Just exploring</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="q-notes">Anything else we should know? <span class="opt">(optional)</span></label>
+              <textarea id="q-notes" name="notes" rows="3" maxlength="2000" placeholder="e.g. We want more calls from Airdrie and Cochrane."></textarea>
+            </div>
+            <button class="btn btn-primary btn-lg" type="submit" id="quoteBtn"><span class="btn-label">Request my quote</span></button>
+            <p class="form-status" id="quoteStatus" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <div class="glass quote-list-card">
+          <p class="card-label">Your requests</p>
+          <ul class="quote-list" id="quoteList"></ul>
+          <p class="muted small" id="quoteEmpty">No requests yet. Austin replies within 1 business day.</p>
+        </div>
+      </div>
+
+      <p class="small-note foot-note">Scores come from checks of your public page plus Google PageSpeed. They are guidance, not a guarantee of rankings.</p>
+    </section>
+  </main>
+
+  <script src="../shared/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="account.js"></script>
+</body>
+</html>
