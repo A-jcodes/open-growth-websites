@@ -35,3 +35,11 @@ create policy "Website can insert leads"
 
 revoke all on public.leads from anon, authenticated;
 grant insert (name, email, revenue_range, biggest_problem, source, offer, page_url) on public.leads to anon;
+
+-- ---- beehiiv sync (added later; also applied as migrations) ----
+-- Each new lead triggers the sync-beehiiv Edge Function (supabase/functions/sync-beehiiv).
+-- The function needs the secret BEEHIIV_API_KEY, set in Supabase > Edge Functions > Secrets.
+alter table public.leads add column if not exists crm_error text;
+create extension if not exists pg_net with schema extensions;
+-- The notify_beehiiv_sync() trigger function and leads_sync_beehiiv trigger live in the
+-- sync_leads_to_beehiiv migration in the Supabase project.
