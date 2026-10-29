@@ -1634,3 +1634,8 @@ html.lenis, html.lenis body { height: auto; }
 .og-cta__box .h2 { margin: 6px 0 8px; }
 .og-cta__box p { margin: 0; color: var(--muted); max-width: 46ch; }
 .og-cta__box .kicker { margin: 0; color: var(--cyan); }
+
+/* Revenue question: make every option look clickable */
+#audit-form .chips .chip span { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 10px 18px; border: 1.5px solid rgba(255, 255, 255, 0.4); color: var(--text); font-weight: 600; }
+#audit-form .chips .chip span::before { content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.6); transition: border-color 0.2s, background 0.2s; }
+#audit-form .chips .chip input:checked + span::before { border-color: #0a0916; background: radial-gradient(circle, #0a0916 0 4px, transparent 5px); }

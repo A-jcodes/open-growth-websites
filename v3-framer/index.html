@@ -645,6 +645,18 @@ footer { padding: 72px 0 40px; }
   .split .w > span { transform: none; }
   .mock { transform: none; }
 }
+.opts { border: 0; padding: 0; margin: 0; min-width: 0; }
+.opts legend { font-size: 14px; font-weight: 500; padding: 0; margin-bottom: 8px; }
+.opt-grid { display: grid; gap: 8px; }
+.opt { position: relative; cursor: pointer; display: block; }
+.opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.opt span { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 12px 16px; border-radius: var(--r-md); background: var(--s2); box-shadow: inset 0 0 0 1px #4a4a4a; font-weight: 500; transition: box-shadow .2s, background .2s; }
+.opt span::before { content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%; box-shadow: inset 0 0 0 2px #8a8a8a; }
+.opt:hover span { box-shadow: inset 0 0 0 1px #8a8a8a; }
+.opt input:checked + span { box-shadow: inset 0 0 0 2px var(--blue); background: rgba(0,153,255,.12); }
+.opt input:checked + span::before { box-shadow: inset 0 0 0 2px var(--blue); background: radial-gradient(circle, var(--blue) 0 5px, transparent 6px); }
+.opt input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
+.opts.err .opt span { box-shadow: inset 0 0 0 1px var(--g-coral); }
 .og-cta { padding: 0 0 clamp(32px, 6vw, 64px); }
 .og-cta__box { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: center; justify-content: space-between; background: var(--s2); border-radius: var(--r-xl); box-shadow: var(--edge); padding: clamp(24px, 4vw, 44px); }
 .og-cta__box h2 { margin: 8px 0; }
@@ -1206,11 +1218,17 @@ footer { padding: 72px 0 40px; }
         <form class="form reveal" id="auditForm" novalidate>
           <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required aria-describedby="f-name-msg" /><span class="msg" id="f-name-msg">Enter your name so we know who to reply to.</span></div>
           <div class="field"><label for="f-email">Your email</label><input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-msg" /><span class="msg" id="f-email-msg">Enter an email address like you@yourbusiness.ca.</span></div>
-          <div class="field">
-            <label for="f-revenue">How much is your business making right now?</label>
-            <select id="f-revenue" name="revenue" required aria-describedby="f-revenue-msg"><option value="">Choose a range</option><option>$0 - $1,000</option><option>$1,000 - $10,000</option><option>$10,000 - $100,000</option><option>$100,000 - $1 million</option><option>$1 million+</option></select>
+          <fieldset class="field opts" id="revenueOpts" aria-describedby="f-revenue-msg">
+            <legend>How much is your business making right now?</legend>
+            <div class="opt-grid">
+              <label class="opt"><input type="radio" name="revenue" value="$0 - $1,000"><span>$0 - $1,000</span></label>
+              <label class="opt"><input type="radio" name="revenue" value="$1,000 - $10,000"><span>$1,000 - $10,000</span></label>
+              <label class="opt"><input type="radio" name="revenue" value="$10,000 - $100,000"><span>$10,000 - $100,000</span></label>
+              <label class="opt"><input type="radio" name="revenue" value="$100,000 - $1 million"><span>$100,000 - $1 million</span></label>
+              <label class="opt"><input type="radio" name="revenue" value="$1 million+"><span>$1 million+</span></label>
+            </div>
             <span class="msg" id="f-revenue-msg">Pick the range that fits best.</span>
-          </div>
+          </fieldset>
           <div class="field"><label for="f-problem">What is the biggest problem you have right now?</label><textarea id="f-problem" name="problem" rows="4" required placeholder="e.g. The phone is quiet and I don't know why." aria-describedby="f-problem-msg"></textarea><span class="msg" id="f-problem-msg">Tell us the biggest problem, even in a few words.</span></div>
           <button class="btn btn-primary btn-lg" type="submit">Send me the checklist <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button>
           <small>No spam. We use your details only to send the audit.</small>
@@ -1441,12 +1459,19 @@ footer { padding: 72px 0 40px; }
     inp.addEventListener('blur', function () { if (inp.value.trim() || inp.getAttribute('aria-invalid')) checkInput(inp); });
     inp.addEventListener('input', function () { if (inp.getAttribute('aria-invalid')) checkInput(inp); });
   });
+  form.querySelectorAll('input[name="revenue"]').forEach(function (r) {
+    r.addEventListener('change', function () { document.getElementById('revenueOpts').classList.remove('err'); });
+  });
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var firstBad = null, count = 0;
     form.querySelectorAll('[required]').forEach(function (inp) {
       if (!checkInput(inp)) { count++; if (!firstBad) firstBad = inp; }
     });
+    var revenueOpts = document.getElementById('revenueOpts');
+    var revenueMissing = !form.elements.revenue.value;
+    revenueOpts.classList.toggle('err', revenueMissing);
+    if (revenueMissing) { count++; if (!firstBad) firstBad = form.querySelector('input[name="revenue"]'); }
     if (firstBad) {
       formStatus.textContent = count === 1 ? '1 field needs fixing.' : count + ' fields need fixing.';
       firstBad.focus();
