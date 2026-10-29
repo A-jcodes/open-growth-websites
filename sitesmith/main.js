@@ -782,23 +782,6 @@
       form.hidden = true;
       success.hidden = false;
       success.focus();
-      if (!reduceMotion) {
-        var burst = function () {
-          try {
-            w.confetti({
-              particleCount: 160, spread: 90, startVelocity: 42, origin: { y: 0.65 },
-              colors: ['#2f4bff', '#ffd43b', '#ff7ac6', '#35d49a', '#ff6b2c']
-            });
-          } catch (e) { /* decorative */ }
-        };
-        if (typeof w.confetti === 'function') burst();
-        else {
-          var s = d.createElement('script');
-          s.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
-          s.onload = burst;
-          d.head.appendChild(s);
-        }
-      }
       if (hasST) ScrollTrigger.refresh();
     }
 
