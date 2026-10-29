@@ -23,6 +23,7 @@
       revenue_range: lead.revenue_range,
       biggest_problem: lead.biggest_problem,
       source: lead.source || 'unknown',
+      offer: lead.offer || 'calls-checklist',
       page_url: w.location.href.split('#')[0].slice(0, 500)
     };
     return fetch(cfg.url.replace(/\/+$/, '') + '/rest/v1/leads', {

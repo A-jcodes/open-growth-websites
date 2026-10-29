@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>The Calgary Calls Checklist | Open Growth</title>
+  <meta name="description" content="Ten checks that bring a Calgary small business more phone calls and bookings from Google.">
+  <style>
+    :root { --bg: #f6f4ef; --fg: #161616; --muted: #5d5a54; --card: #ffffff; --line: #dedad2; --accent: #1f6f4a; --accent-soft: #e3f1ea; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #121212; --fg: #f2f0eb; --muted: #a8a49c; --card: #1c1c1c; --line: #2e2e2e; --accent: #6fd3a2; --accent-soft: #1a2a22; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 48px 16px 64px; }
+    .eyebrow { margin: 0 0 8px; color: var(--accent); font-weight: 700; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); line-height: 1.15; margin: 0 0 12px; }
+    .lede { color: var(--muted); margin: 0 0 12px; }
+    .progress { position: sticky; top: 0; z-index: 2; margin: 20px -16px 8px; padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--line); font-weight: 600; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+    .bar { flex: 1; height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s; }
+    h2 { font-size: 1.15rem; margin: 32px 0 12px; }
+    ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    label { display: grid; grid-template-columns: 28px 1fr; gap: 14px; align-items: start; padding: 16px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; cursor: pointer; }
+    label:hover { border-color: var(--accent); }
+    label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); }
+    input[type="checkbox"] { width: 24px; height: 24px; margin: 2px 0 0; accent-color: var(--accent); cursor: pointer; }
+    input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    strong { display: block; }
+    span.why { color: var(--muted); font-size: .95rem; }
+    .score { display: none; margin-top: 28px; padding: 20px; border-radius: 14px; background: var(--accent-soft); border: 1px solid var(--accent); }
+    .score.show { display: block; }
+    .next { margin-top: 36px; padding: 24px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+    .next h2 { margin-top: 0; }
+    .next a { color: var(--accent); font-weight: 700; }
+    footer { margin-top: 28px; color: var(--muted); font-size: .9rem; }
+    @media print { .progress, .next a.btn { display: none; } body { background: #fff; color: #000; } label { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Open Growth</p>
+    <h1>The Calgary Calls Checklist</h1>
+    <p class="lede">Ten checks that decide whether a local customer calls you or the business next to you on Google Maps. Tick what you already do. Whatever is left unticked is your to-do list.</p>
+
+    <div class="progress" aria-live="polite"><span id="count">0 of 10 done</span><div class="bar" aria-hidden="true"><i id="fill"></i></div></div>
+
+    <h2>Get found on Google</h2>
+    <ul>
+      <li><label><input type="checkbox"><span><strong>Your Google Business Profile is claimed and verified.</strong><span class="why">Search your business name on Google Maps. If you cannot edit the listing, it is not yours yet.</span></span></label></li>
+      <li><label><input type="checkbox"><span><strong>Your main category is the most specific one that fits.</strong><span class="why">"Plumber" beats "Contractor". Add secondary categories for other services you really offer.</span></span></label></li>
+      <li><label><input type="checkbox"><span><strong>Your name, address and phone match everywhere.</strong><span class="why">Website, Google, Facebook and directories should show the same details, spelled the same way.</span></span></label></li>
+      <li><label><input type="checkbox"><span><strong>You have real photos, added in the last 3 months.</strong><span class="why">Your storefront, your team and finished work. Fresh photos show people you are open and active.</span></span></label></li>
+      <li><label><input type="checkbox"><span><strong>You ask every happy customer for a review, and reply to every review.</strong><span class="why">Send the review link by text right after the job. Replies show future customers you pay attention.</span></span></label></li>
+    </ul>
+
+    <h2>Turn visits into calls</h2>
+    <ul>
+      <li><label><input type="checkbox"><span><strong>Your phone number is tap-to-call at the top of every page on mobile.</strong><span class="why">Most local searches happen on a phone. One tap should start the call.</span></span></label></li>
+      <li><label><input type="checkbox"><span><strong>Your site loads in about 3 seconds or less on mobile.</strong><span class="why">Test it free at pagespeed.web.dev. Large uncompressed photos are the usual culprit.</span></span></label></li>
+      <li><label><input type="checkbox"><span><strong>Each service has its own page, with your town in the title.</strong><span class="why">"Furnace repair in Calgary" on its own page beats one page that lists everything.</span></span></label></li>
+      <li><label><input type="checkbox"><span><strong>You show prices, or at least price ranges.</strong><span class="why">People who cannot find a price often leave to find a business that shows one.</span></span></label></li>
+    </ul>
+
+    <h2>Win the job</h2>
+    <ul>
+      <li><label><input type="checkbox"><span><strong>Every call, form and message gets a reply within minutes, not days.</strong><span class="why">The first business to answer often gets the job. A missed-call text-back such as "Sorry we missed you, how can we help?" keeps the lead warm.</span></span></label></li>
+    </ul>
+
+    <div class="score" id="score" role="status"></div>
+
+    <section class="next">
+      <h2>Want a hand with the unticked ones?</h2>
+      <p>Austin reads every answer you sent and will email you within 1 business day. You can also call <a href="tel:+14035550142">(403) 555-0142</a> or email <a href="mailto:hello@opengrowth.ca">hello@opengrowth.ca</a>.</p>
+    </section>
+
+    <footer>Open Growth, Calgary, Alberta. Tip: use your browser's Print option to save this as a PDF.</footer>
+  </main>
+
+  <script>
+    (function () {
+      var boxes = document.querySelectorAll('input[type="checkbox"]');
+      var count = document.getElementById('count');
+      var fill = document.getElementById('fill');
+      var score = document.getElementById('score');
+      function update() {
+        var done = 0;
+        boxes.forEach(function (b) { if (b.checked) done++; });
+        count.textContent = done + ' of ' + boxes.length + ' done';
+        fill.style.width = (done / boxes.length * 100) + '%';
+        if (done === boxes.length) {
+          score.textContent = 'All ten ticked. You are doing the things most local businesses skip. Keep your reviews and photos fresh.';
+        } else if (done >= 6) {
+          score.textContent = 'Solid start. The ' + (boxes.length - done) + ' unticked items are your quickest wins.';
+        } else {
+          score.textContent = 'Plenty of easy wins here. Start with the first unticked item in "Get found on Google".';
+        }
+        score.classList.toggle('show', done > 0);
+      }
+      boxes.forEach(function (b) { b.addEventListener('change', update); });
+      update();
+    })();
+  </script>
+</body>
+</html>

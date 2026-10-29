@@ -15,6 +15,7 @@ create table if not exists public.leads (
                    )),
   biggest_problem  text not null check (char_length(btrim(biggest_problem)) between 3 and 2000),
   source           text not null default 'unknown' check (char_length(source) <= 60),
+  offer            text not null default 'calls-checklist' check (char_length(offer) <= 60),
   page_url         text check (char_length(page_url) <= 500),
   crm_synced_at    timestamptz            -- set by the CRM sync later
 );
@@ -33,4 +34,4 @@ create policy "Website can insert leads"
   with check (crm_synced_at is null);
 
 revoke all on public.leads from anon, authenticated;
-grant insert (name, email, revenue_range, biggest_problem, source, page_url) on public.leads to anon;
+grant insert (name, email, revenue_range, biggest_problem, source, offer, page_url) on public.leads to anon;

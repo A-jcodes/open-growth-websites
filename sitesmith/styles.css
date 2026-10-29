@@ -1127,3 +1127,10 @@ i[data-lucide] { display: inline-block; width: 1em; height: 1em; }
   .marquee__track { animation: none; }
   .spin-sticker__ring, .spot, .dot--mint { animation: none; }
 }
+
+/* Checklist CTA band */
+.og-cta { padding: clamp(32px, 6vw, 64px) 0; }
+.og-cta__box { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: center; justify-content: space-between; background: var(--yellow); color: var(--ink); border: 3px solid var(--ink); border-radius: 28px; box-shadow: 8px 8px 0 var(--ink); padding: clamp(24px, 4vw, 40px); }
+.og-cta__box h2 { font-family: var(--display); font-size: clamp(1.6rem, 3.5vw, 2.4rem); line-height: 1.05; margin: 0 0 8px; }
+.og-cta__box p { margin: 0; max-width: 46ch; }
+.og-cta__box .og-cta__kicker { font-family: "Space Mono", monospace; font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }

@@ -936,7 +936,8 @@
         email: String(field('email').value || '').trim(),
         revenue_range: revenueValue(),
         biggest_problem: String(field('problem').value || '').trim(),
-        source: 'v2-agent-dark-3d'
+        source: 'v2-agent-dark-3d',
+        offer: 'calls-checklist'
       };
 
       setLoading(true);

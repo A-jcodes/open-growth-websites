@@ -43,6 +43,8 @@ Setup:
 2. Open **SQL Editor**, paste `supabase/leads.sql` and run it. This creates the table and locks it down: the public key can only insert rows, never read, edit or delete them.
 3. Open **Project Settings > API** and copy the project URL and the `anon public` key into `shared/supabase-config.js`. Never use the `service_role` key in this repo.
 
+The form is the gate for the free **Calgary Calls Checklist** (`checklist/index.html`, a tick-as-you-go page that can also be printed to PDF). Each design has a CTA band above the form, and the success message links to the checklist. Every lead is stored with `offer = 'calls-checklist'`. The checklist page itself is public but not indexed (`noindex`), so anyone with the link can open it.
+
 Until step 3 is done, the forms show an error on submit instead of pretending to send.
 
 The sites load the shared scripts from `../shared/`, so deploy the whole repo, not a single design folder.

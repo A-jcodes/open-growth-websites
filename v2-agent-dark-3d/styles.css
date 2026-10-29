@@ -1627,3 +1627,10 @@ html.lenis, html.lenis body { height: auto; }
   .browser, .b-web:hover .browser { transform: none; }
   .motion-ctrl { display: none; }
 }
+
+/* Checklist CTA band */
+.og-cta { padding: clamp(32px, 6vw, 72px) 0; }
+.og-cta__box { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: center; justify-content: space-between; padding: clamp(24px, 4vw, 44px); border-radius: 24px; border: 1px solid var(--line); background: var(--panel); }
+.og-cta__box .h2 { margin: 6px 0 8px; }
+.og-cta__box p { margin: 0; color: var(--muted); max-width: 46ch; }
+.og-cta__box .kicker { margin: 0; color: var(--cyan); }

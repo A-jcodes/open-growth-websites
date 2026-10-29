@@ -829,7 +829,8 @@
         email: form.elements.email.value.trim(),
         revenue_range: revenueValue(),
         biggest_problem: form.elements.problem.value.trim(),
-        source: 'sitesmith'
+        source: 'sitesmith',
+        offer: 'calls-checklist'
       };
 
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }

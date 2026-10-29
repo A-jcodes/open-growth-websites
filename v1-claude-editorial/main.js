@@ -413,6 +413,7 @@
       revenue_range: selectedRevenue(),
       biggest_problem: form.elements.problem.value.trim(),
       source: 'v1-claude-editorial',
+      offer: 'calls-checklist',
     };
     const submitBtn = form.querySelector('button[type="submit"]');
     const submitHTML = submitBtn.innerHTML;

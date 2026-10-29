@@ -533,3 +533,10 @@ i[data-lucide], svg.lucide { width: 1.05em; height: 1.05em; stroke-width: 2.2; f
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .motion-ctrl { display: none; }
 }
+
+/* Checklist CTA band */
+.og-cta { padding: clamp(32px, 6vw, 72px) 0; }
+.og-cta__box { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: center; justify-content: space-between; background: var(--dark); color: var(--on-dark); border-radius: var(--radius); padding: clamp(28px, 5vw, 52px); }
+.og-cta__box h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); line-height: 1.05; margin: 8px 0; }
+.og-cta__box p { margin: 0; color: var(--on-dark-muted); max-width: 46ch; }
+.og-cta__box .eyebrow { margin: 0; }

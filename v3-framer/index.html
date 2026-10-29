@@ -645,6 +645,11 @@ footer { padding: 72px 0 40px; }
   .split .w > span { transform: none; }
   .mock { transform: none; }
 }
+.og-cta { padding: 0 0 clamp(32px, 6vw, 64px); }
+.og-cta__box { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: center; justify-content: space-between; background: var(--s2); border-radius: var(--r-xl); box-shadow: var(--edge); padding: clamp(24px, 4vw, 44px); }
+.og-cta__box h2 { margin: 8px 0; }
+.og-cta__box p { margin: 0; max-width: 46ch; }
+.og-cta__box .body-lg { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -688,7 +693,7 @@ footer { padding: 72px 0 40px; }
     </nav>
     <div class="nav-right">
       <a class="nav-phone" href="tel:+14035550142" aria-label="Call (403) 555-0142"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>(403) 555-0142</span></a>
-      <a class="btn btn-primary" href="#audit">Get free audit</a>
+      <a class="btn btn-primary" href="#audit">Get free checklist</a>
       <button class="btn btn-circle menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span></button>
     </div>
   </div>
@@ -700,7 +705,7 @@ footer { padding: 72px 0 40px; }
   <a href="#process">Process</a>
   <a href="#faq">FAQ</a>
   <a href="tel:+14035550142">Call (403) 555-0142</a>
-  <a class="btn btn-primary btn-lg" href="#audit">Get my free website audit</a>
+  <a class="btn btn-primary btn-lg" href="#audit">Get my free checklist</a>
 </nav>
 
 <main id="main">
@@ -713,7 +718,7 @@ footer { padding: 72px 0 40px; }
     <h1 class="d-xxl split" data-split>Calgary web design for more calls. <span class="blue">Less guessing.</span></h1>
     <p class="subhead reveal" style="--d:400ms">Websites, local search and automatic lead follow-up for Calgary businesses, in one monthly plan, with a live dashboard of every call it brings in.</p>
     <div class="hero-ctas reveal" style="--d:520ms">
-      <a href="#audit" class="btn btn-primary btn-lg">Get my free website audit <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a href="#audit" class="btn btn-primary btn-lg">Get my free checklist <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       <a href="#pricing" class="btn btn-translucent btn-lg">See pricing</a>
     </div>
     <p class="hero-note reveal" style="--d:600ms">A written report in 2 business days. No call required, no obligation.</p>
@@ -1095,7 +1100,7 @@ footer { padding: 72px 0 40px; }
     </div>
     <div class="progress" aria-hidden="true"><i id="progress"></i></div>
     <div class="steps" id="steps">
-      <div class="step reveal"><div class="step-n"><b>1</b><span>2 business days</span></div><h3 class="headline">Free audit</h3><p>A written report on your site, Google profile and three nearest competitors.</p></div>
+      <div class="step reveal"><div class="step-n"><b>1</b><span>2 business days</span></div><h3 class="headline">Free checklist</h3><p>A written report on your site, Google profile and three nearest competitors.</p></div>
       <div class="step reveal" style="--d:80ms"><div class="step-n"><b>2</b><span>30 minutes</span></div><h3 class="headline">Plan call</h3><p>We agree the goal, the number we track and the price.</p></div>
       <div class="step reveal" style="--d:160ms"><div class="step-n"><b>3</b><span>3 to 4 weeks</span></div><h3 class="headline">Build and launch</h3><p>We write, design and launch. You review twice; we do the rest.</p></div>
       <div class="step reveal" style="--d:240ms"><div class="step-n"><b>4</b><span>Every month</span></div><h3 class="headline">Grow and report</h3><p>Monthly improvements, review requests and a live dashboard of results.</p></div>
@@ -1168,20 +1173,34 @@ footer { padding: 72px 0 40px; }
   </div>
 </section>
 
+<!-- ================= CHECKLIST CTA ================= -->
+<section class="og-cta" aria-labelledby="og-cta-title">
+  <div class="wrap">
+    <div class="og-cta__box reveal">
+      <div>
+        <p class="eyebrow">Free. Takes 60 seconds.</p>
+        <h2 id="og-cta-title" class="d-lg">Claim your free Calgary Calls Checklist.</h2>
+        <p class="body-lg">Ten checks that decide whether a customer calls you or the business next door.</p>
+      </div>
+      <a class="btn btn-primary btn-lg" href="#audit">Claim my free checklist <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+</section>
+
 <!-- ================= CTA + FORM ================= -->
 <section class="cta" id="audit" style="padding-top:0">
   <div class="wrap">
     <div class="cta-box">
       <div class="cta-grid">
         <div>
-          <p class="eyebrow reveal">Free website audit</p>
-          <h2 class="d-lg split" data-split>Find out what’s stopping customers from calling.</h2>
-          <p class="body-lg reveal" style="margin-top:20px">Tell us where to look. You get a written report in 2 business days, whether or not you work with us.</p>
+          <p class="eyebrow reveal">Free checklist</p>
+          <h2 class="d-lg split" data-split>Claim your free Calgary Calls Checklist.</h2>
+          <p class="body-lg reveal" style="margin-top:20px">Answer four quick questions and the ten-point checklist is yours instantly. Austin also reads your answers and replies within 1 business day.</p>
           <ul class="get reveal">
-            <li><span>01</span>Mobile speed and Core Web Vitals</li>
-            <li><span>02</span>Google Maps rank for your top 3 searches</li>
-            <li><span>03</span>Reviews compared with 3 competitors</li>
-            <li><span>04</span>5 fixes, ranked by likely impact</li>
+            <li><span>01</span>Get found on Google Maps</li>
+            <li><span>02</span>Turn visits into calls</li>
+            <li><span>03</span>Win the job with fast follow-up</li>
+            <li><span>04</span>Printable, tick as you go</li>
           </ul>
         </div>
         <form class="form reveal" id="auditForm" novalidate>
@@ -1193,13 +1212,14 @@ footer { padding: 72px 0 40px; }
             <span class="msg" id="f-revenue-msg">Pick the range that fits best.</span>
           </div>
           <div class="field"><label for="f-problem">What is the biggest problem you have right now?</label><textarea id="f-problem" name="problem" rows="4" required placeholder="e.g. The phone is quiet and I don't know why." aria-describedby="f-problem-msg"></textarea><span class="msg" id="f-problem-msg">Tell us the biggest problem, even in a few words.</span></div>
-          <button class="btn btn-primary btn-lg" type="submit">Get my free audit <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <button class="btn btn-primary btn-lg" type="submit">Send me the checklist <svg class="icon icon-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button>
           <small>No spam. We use your details only to send the audit.</small>
           <p class="sr-only" id="form-status" role="status"></p>
           <div class="form-done" tabindex="-1">
             <div class="ok"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div>
             <h3 class="headline">Got it, thank you.</h3>
             <p>We’ll email you within 1 business day.</p>
+            <p><a class="btn btn-primary" href="../checklist/" target="_blank" rel="noopener">Open your checklist</a></p>
           </div>
         </form>
       </div>
