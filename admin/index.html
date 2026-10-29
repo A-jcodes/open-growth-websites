@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Admin | Open Growth</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%238f7bff'/%3E%3Cstop offset='1' stop-color='%233ee0ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%2306060b'/%3E%3Cpath d='M12 46 L26 32 L36 40 L52 18' fill='none' stroke='url(%23g)' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../v2-agent-dark-3d/styles.css" />
+  <link rel="stylesheet" href="../account/account.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="acct adm">
+  <div class="acct-bg" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span><span class="grid"></span></div>
+
+  <header class="acct-top">
+    <div class="adm-top-inner">
+      <a class="logo" href="../v2-agent-dark-3d/" aria-label="Open Growth website">
+        <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <defs><linearGradient id="logoGrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#8f7bff" /><stop offset="1" stop-color="#3ee0ff" /></linearGradient></defs>
+          <rect x="1" y="1" width="30" height="30" rx="9" fill="none" stroke="rgba(255,255,255,.14)" />
+          <path d="M7 22 L13.5 15.5 L18 19 L25 10" fill="none" stroke="url(#logoGrad)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="25" cy="10" r="2.2" fill="#3ee0ff" />
+        </svg>
+        <span class="logo-text">Open<span>Growth</span></span>
+      </a>
+      <span class="adm-badge">Admin</span>
+      <div class="acct-top-actions">
+        <span class="muted small" id="whoAmI"></span>
+        <button class="btn btn-primary btn-sm" id="signOutBtn" type="button" hidden>Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app" class="adm-main">
+    <section id="viewLoading" class="acct-center"><div class="spinner" aria-hidden="true"></div><p class="muted">Loading...</p></section>
+
+    <!-- Sign in -->
+    <section id="viewLogin" class="acct-center" hidden aria-labelledby="loginTitle">
+      <div class="auth-card glass narrow">
+        <h1 id="loginTitle" class="h3">Team sign-in</h1>
+        <p class="muted small" style="margin:8px 0 18px">For Open Growth staff only.</p>
+        <form id="loginForm" class="audit-form" novalidate>
+          <div class="field"><label for="li-email">Email</label><input id="li-email" type="email" autocomplete="email" required /></div>
+          <div class="field"><label for="li-pass">Password</label><input id="li-pass" type="password" autocomplete="current-password" required /></div>
+          <button class="btn btn-primary btn-lg btn-block" type="submit" id="loginBtn">Sign in</button>
+          <p class="form-status" id="loginStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Signed in but not staff -->
+    <section id="viewDenied" class="acct-center" hidden>
+      <div class="auth-card glass narrow">
+        <h1 class="h3">This area is for the Open Growth team</h1>
+        <p class="muted" style="margin:10px 0 18px">Your account is not set up as staff. If this is a mistake, ask the site owner to add you.</p>
+        <a class="btn btn-primary" href="../account/">Go to my dashboard</a>
+      </div>
+    </section>
+
+    <!-- Admin -->
+    <section id="viewAdmin" hidden>
+      <div class="adm-shell">
+        <aside class="adm-side glass" aria-label="Sections">
+          <nav class="adm-nav" id="admNav">
+            <button type="button" class="adm-nav-btn is-active" data-view="customers">Customers <span class="count" id="cntCustomers"></span></button>
+            <button type="button" class="adm-nav-btn" data-view="quotes">Quotes <span class="count" id="cntQuotes"></span></button>
+            <button type="button" class="adm-nav-btn" data-view="leads">Leads <span class="count" id="cntLeads"></span></button>
+          </nav>
+          <div id="sideList">
+            <div class="adm-search"><label class="sr-only" for="search">Search customers</label><input id="search" type="search" placeholder="Search customers" /></div>
+            <ul class="cust-list" id="custList"></ul>
+          </div>
+        </aside>
+
+        <div class="adm-content">
+          <div id="paneCustomers">
+            <div class="glass adm-empty" id="noSelection"><p class="muted">Pick a customer on the left to see their messages, work and scans.</p></div>
+            <div id="custDetail" hidden>
+              <div class="glass cust-head">
+                <div>
+                  <h1 class="h3" id="cdName"></h1>
+                  <p class="muted" id="cdBiz"></p>
+                </div>
+                <dl class="cust-facts" id="cdFacts"></dl>
+              </div>
+              <div class="filter" role="tablist" aria-label="Customer sections" id="cdTabs">
+                <button class="chipbtn is-active" type="button" data-tab="messages">Messages <span class="count" id="cdUnread"></span></button>
+                <button class="chipbtn" type="button" data-tab="work">Work</button>
+                <button class="chipbtn" type="button" data-tab="updates">Updates</button>
+                <button class="chipbtn" type="button" data-tab="scans">Scans</button>
+                <button class="chipbtn" type="button" data-tab="quotes">Quotes</button>
+              </div>
+              <div id="tabBody"></div>
+            </div>
+          </div>
+          <div id="paneQuotes" hidden><div id="quotesBody"></div></div>
+          <div id="paneLeads" hidden><div id="leadsBody"></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="../shared/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
