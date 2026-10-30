@@ -22,7 +22,7 @@
   var sb = window.supabase.createClient(cfg.url, cfg.anonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   var redirectTo = window.location.origin + window.location.pathname;
 
-  var state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null, payments: [] };
+  var state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null, payments: [], plan: null };
 
   /* ---------- views ---------- */
   var VIEWS = ['viewLoading', 'viewAuth', 'viewRecovery', 'viewDash'];
@@ -162,7 +162,7 @@
   /* ---------- session handling ---------- */
   sb.auth.onAuthStateChange(function (event, session) {
     if (event === 'PASSWORD_RECOVERY') { show('viewRecovery'); return; }
-    if (event === 'SIGNED_OUT') { try { sb.removeAllChannels(); } catch (e) { /* ignore */ } state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null, work: [], activity: [], messages: [], payments: [] }; show('viewAuth'); return; }
+    if (event === 'SIGNED_OUT') { try { sb.removeAllChannels(); } catch (e) { /* ignore */ } state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null, work: [], activity: [], messages: [], payments: [], plan: null }; show('viewAuth'); return; }
     if (session && session.user) {
       if (state.loadedFor === session.user.id) return;
       // Defer so we never call Supabase inside its own auth callback
@@ -199,6 +199,8 @@
       renderChat();
       subscribeLive();
       maybeFirstScan();
+      renderPlan();
+      loadPlan().then(handlePlanReturn);
       loadPayments().then(handlePaymentReturn);
     });
   }
@@ -270,6 +272,80 @@
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); $('#chatForm').requestSubmit(); }
   });
 
+  /* ---------- plan: Standard (free) or Premium ($30 CAD / month) ----------
+     The plan is only ever READ here (profiles.plan is written by the Stripe webhook, never by a browser). With payments
+     switched off nothing is requested: no table, no function, and everyone is shown as Standard. */
+  var PREMIUM_PRICE = '$30 CAD / month';
+  var PLAN_COLS = 'plan,plan_status,plan_renews_at,plan_cancel_at_period_end';
+  var STANDARD_SCANS_SHOWN = 3;
+  var CONFIRM_LINE = "You will be taken to Stripe's secure page. $30 CAD per month. Cancel any time.";
+  function isPremium() { return !!(state.plan && state.plan.plan === 'premium'); }
+  function loadPlan() {
+    if (!PAYMENTS_ON || !state.user) return Promise.resolve();
+    return sb.from('profiles').select(PLAN_COLS).eq('id', state.user.id).maybeSingle().then(function (r) {
+      state.plan = r.error ? null : (r.data || null);
+      renderPlan(); renderHistory(); // the scan history length depends on the plan
+    }, function () { state.plan = null; renderPlan(); });
+  }
+  function planLine() {
+    var p = state.plan || {};
+    if (!isPremium()) return 'You are on the free Standard plan. Everything you have today stays included.';
+    if (p.plan_status === 'past_due') return 'Your last Premium payment did not go through. Please update your card with Manage billing to keep Premium.';
+    if (p.plan_cancel_at_period_end && p.plan_renews_at) return 'Premium cancels on ' + fmtDay(p.plan_renews_at) + '. You keep Premium until then.';
+    if (p.plan_renews_at) return 'Active. Renews on ' + fmtDay(p.plan_renews_at) + '.';
+    return 'Active.';
+  }
+  function renderPlan() {
+    var card = $('#planCard'); if (!card) return;
+    var prem = isPremium(), p = state.plan || {};
+    card.classList.toggle('is-premium', prem);
+    $('#planBadge').innerHTML = prem
+      ? '<span class="plan-badge premium"><i data-lucide="crown" aria-hidden="true"></i> Premium</span>'
+      : '<span class="plan-badge standard"><i data-lucide="user" aria-hidden="true"></i> Standard</span>';
+    $('#planStatusLine').innerHTML = (prem && p.plan_status === 'past_due' ? '<span class="pill fail">Payment failed</span> ' : '') + esc(planLine());
+    var ok = '<i data-lucide="check" aria-hidden="true"></i> ';
+    $('#planCompare').innerHTML =
+      '<div class="plan-col standard' + (!prem ? ' is-current' : '') + '"><h3>Standard</h3><p class="plan-price">Free</p><ul>' +
+        '<li>' + ok + 'Website scans, 10 per hour</li><li>' + ok + 'Latest 3 scans in your history</li><li>' + ok + 'Messages, updates and quotes</li></ul></div>' +
+      '<div class="plan-col premium' + (prem ? ' is-current' : '') + '"><h3><i data-lucide="sparkles" aria-hidden="true"></i> Premium</h3><p class="plan-price">' + esc(PREMIUM_PRICE) + '</p><ul>' +
+        '<li>' + ok + 'Priority replies: your messages are answered first</li><li>' + ok + 'Higher scan limit: 30 per hour</li><li>' + ok + 'Full scan history (up to 20 scans)</li></ul></div>';
+    var actions = '';
+    if (prem) {
+      actions = '<button class="btn btn-ghost btn-sm" type="button" data-plan="portal"' + (PAYMENTS_ON ? '' : ' disabled') + '>Manage billing</button>';
+    } else if (PAYMENTS_ON) {
+      actions = '<button class="btn btn-primary plan-upgrade" type="button" data-plan="upgrade"><i data-lucide="crown" aria-hidden="true"></i> Upgrade to Premium, $30 CAD/month</button>' +
+        '<p class="muted small plan-note">' + esc(CONFIRM_LINE) + '</p>';
+    } else {
+      actions = '<button class="btn btn-primary plan-upgrade" type="button" disabled>Premium coming soon</button>';
+    }
+    $('#planActions').innerHTML = actions;
+    icons();
+  }
+  $('#planActions').addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-plan]'); if (!b || b.disabled || !PAYMENTS_ON) return;
+    if (b.dataset.plan === 'upgrade') goToStripe('create-checkout-session', { plan: 'premium' }, b, $('#planStatus'));
+    else goToStripe('create-portal-session', {}, b, $('#planStatus'));
+  });
+  // Back from Stripe after upgrading: the webhook sets the plan a few seconds later, so check again for a short while
+  function handlePlanReturn() {
+    if (!PAYMENTS_ON) return;
+    var q = new URLSearchParams(window.location.search), result = q.get('plan');
+    if (result !== 'success' && result !== 'cancelled') return;
+    try { window.history.replaceState(null, '', window.location.pathname + window.location.hash); } catch (e) { /* ignore */ }
+    var status = $('#planStatus');
+    var c = $('#planCard'); if (c && c.scrollIntoView) c.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    if (result === 'cancelled') { say(status, 'Upgrade cancelled. Nothing was charged.'); return; }
+    if (isPremium()) { say(status, 'Welcome to Premium!', 'ok'); return; }
+    say(status, 'Thank you. We are confirming your upgrade now...', 'ok');
+    var tries = 0, timer = window.setInterval(function () {
+      tries++;
+      loadPlan().then(function () {
+        if (isPremium()) { window.clearInterval(timer); say(status, 'Welcome to Premium!', 'ok'); loadActivity(); }
+        else if (tries >= 12) { window.clearInterval(timer); say(status, 'Your upgrade is still being confirmed. It will show here shortly.', 'ok'); }
+      });
+    }, 3000);
+  }
+
   /* ---------- payments (Stripe Checkout, hosted by Stripe) ----------
      Off until shared/payments-config.js says enabled. The card is hidden when there is nothing to show or the
      payments tables do not exist yet, so a half-ready backend can never break the dashboard. */
@@ -316,8 +392,8 @@
     }).join('');
   }
   // Ask a payments function for a Stripe-hosted page and go there. Only Stripe addresses are followed.
-  function goToStripe(fn, body, btn) {
-    var status = $('#payStatus');
+  function goToStripe(fn, body, btn, statusEl) {
+    var status = statusEl || $('#payStatus');
     say(status, '');
     busy(btn, true, 'Opening Stripe...');
     sb.functions.invoke(fn, { body: body || {} }).then(function (r) {
@@ -525,8 +601,12 @@
     });
   });
 
+  // Standard shows the latest 3 saved scans; Premium shows all that are saved (up to 20). A display limit only.
+  function visibleScans() { return isPremium() ? state.scans : state.scans.slice(0, STANDARD_SCANS_SHOWN); }
+
   function renderHistory() {
-    var scans = state.scans.slice().reverse().slice(-12);
+    var shown = visibleScans();
+    var scans = shown.slice().reverse().slice(-12);
     var w = 560, h = 120, pad = 14;
     if (scans.length < 2) {
       $('#spark').innerHTML = '<p class="muted small">Run another scan later to see your score change over time.</p>';
@@ -541,10 +621,13 @@
         '<polyline points="' + line + '" fill="none" stroke="url(#sparkG)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
         pts.map(function (p) { return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4" fill="#06060b" stroke="#3ee0ff" stroke-width="2"/>'; }).join('') + '</svg>';
     }
-    $('#scanList').innerHTML = state.scans.map(function (s, i) {
+    $('#scanList').innerHTML = shown.map(function (s, i) {
       return '<li><button type="button" class="scan-item ' + (state.current && s.id === state.current.id ? 'is-active' : '') + '" data-i="' + i + '">' +
         '<span class="scan-score ' + band(s.score || 0) + '">' + esc(s.score) + '</span><span class="scan-url">' + esc(s.url) + '</span><span class="muted small">' + esc(fmtDate(s.created_at)) + '</span></button></li>';
     }).join('');
+    var hidden = state.scans.length - shown.length;
+    var note = $('#historyUpsell');
+    if (note) { note.hidden = hidden < 1; note.textContent = hidden > 0 ? hidden + ' older scan' + (hidden === 1 ? ' is' : 's are') + ' saved. Premium shows your full scan history.' : ''; }
     $$('.scan-item').forEach(function (b) {
       b.addEventListener('click', function () { renderScans(parseInt(b.dataset.i, 10)); window.scrollTo({ top: $('#results').offsetTop - 80, behavior: reduceMotion ? 'auto' : 'smooth' }); });
     });

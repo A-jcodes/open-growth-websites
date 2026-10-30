@@ -171,6 +171,18 @@
         </div>
       </div>
 
+      <!-- Your plan: Standard (free) or Premium ($30 CAD/month). Filled in by account.js. The upgrade button is disabled unless payments are switched on. -->
+      <div class="glass plan-card" id="planCard" aria-labelledby="planTitle">
+        <div class="plan-head">
+          <p class="card-label" id="planTitle">Your plan</p>
+          <span id="planBadge"></span>
+        </div>
+        <p class="muted small" id="planStatusLine"></p>
+        <div class="plan-compare" id="planCompare"></div>
+        <div class="plan-actions" id="planActions"></div>
+        <p class="form-status" id="planStatus" role="status" aria-live="polite"></p>
+      </div>
+
       <!-- Payment requests from Open Growth. Hidden until payments are switched on and there is something to show. -->
       <div class="glass pay-card" id="payments" hidden>
         <p class="card-label">Payments</p>
@@ -259,6 +271,7 @@
         <div class="glass history">
           <div class="spark" id="spark" role="img" aria-label="Score history chart"></div>
           <ul class="scan-list" id="scanList"></ul>
+          <p class="muted small" id="historyUpsell" hidden></p>
         </div>
       </div>
 
