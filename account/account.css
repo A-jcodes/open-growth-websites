@@ -195,3 +195,11 @@ body.acct { min-height: 100vh; background: var(--bg); }
   .scan-item .muted { grid-column: 2; }
   .acct-top-actions .btn-ghost { display: none; }
 }
+
+/* Payments */
+.pay-card { padding: clamp(20px, 3vw, 28px); border-radius: var(--radius); margin-bottom: 18px; }
+.pay-card[hidden] { display: none; }
+.pay-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 12px; }
+.pay-list li { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.03); }
+.pay-main { display: grid; gap: 2px; min-width: 0; }
+.pay-side { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }

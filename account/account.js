@@ -22,7 +22,7 @@
   var sb = window.supabase.createClient(cfg.url, cfg.anonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   var redirectTo = window.location.origin + window.location.pathname;
 
-  var state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null };
+  var state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null, payments: [] };
 
   /* ---------- views ---------- */
   var VIEWS = ['viewLoading', 'viewAuth', 'viewRecovery', 'viewDash'];
@@ -162,7 +162,7 @@
   /* ---------- session handling ---------- */
   sb.auth.onAuthStateChange(function (event, session) {
     if (event === 'PASSWORD_RECOVERY') { show('viewRecovery'); return; }
-    if (event === 'SIGNED_OUT') { try { sb.removeAllChannels(); } catch (e) { /* ignore */ } state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null, work: [], activity: [], messages: [] }; show('viewAuth'); return; }
+    if (event === 'SIGNED_OUT') { try { sb.removeAllChannels(); } catch (e) { /* ignore */ } state = { user: null, profile: null, scans: [], current: null, filter: 'all', loadedFor: null, work: [], activity: [], messages: [], payments: [] }; show('viewAuth'); return; }
     if (session && session.user) {
       if (state.loadedFor === session.user.id) return;
       // Defer so we never call Supabase inside its own auth callback
@@ -199,6 +199,7 @@
       renderChat();
       subscribeLive();
       maybeFirstScan();
+      loadPayments().then(handlePaymentReturn);
     });
   }
 
@@ -247,10 +248,10 @@
   }
   // Backup for live updates: quietly refresh every 15 seconds while the dashboard is open
   window.setInterval(function () {
-    if (state.user && !document.hidden && !$('#viewDash').hidden) { loadMessages(); loadWork(); loadActivity(); }
+    if (state.user && !document.hidden && !$('#viewDash').hidden) { loadMessages(); loadWork(); loadActivity(); loadPayments(); }
   }, 15000);
   document.addEventListener('visibilitychange', function () {
-    if (!document.hidden && state.user && !$('#viewDash').hidden) { loadMessages(); loadWork(); loadActivity(); }
+    if (!document.hidden && state.user && !$('#viewDash').hidden) { loadMessages(); loadWork(); loadActivity(); loadPayments(); }
   });
   $('#chatForm').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -268,6 +269,96 @@
   $('#chatInput').addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); $('#chatForm').requestSubmit(); }
   });
+
+  /* ---------- payments (Stripe Checkout, hosted by Stripe) ----------
+     Off until shared/payments-config.js says enabled. The card is hidden when there is nothing to show or the
+     payments tables do not exist yet, so a half-ready backend can never break the dashboard. */
+  var PAYMENTS_ON = !!(window.OG_PAYMENTS && window.OG_PAYMENTS.enabled === true);
+  var PAY_COLS = 'id,description,kind,amount_cents,setup_fee_cents,currency,status,paid_at,current_period_end,cancel_at_period_end,created_at';
+  var PAY_UNAVAILABLE = 'Online payments are not switched on yet. Austin will be in touch about how to pay.';
+  function money(cents) { return '$' + (cents / 100).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' CAD'; }
+  function fmtDay(iso) {
+    try { return new Date(iso).toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' }); } catch (e) { return ''; }
+  }
+  function loadPayments() {
+    if (!PAYMENTS_ON || !state.user) return Promise.resolve();
+    return sb.from('payment_requests').select(PAY_COLS).neq('status', 'void').order('created_at', { ascending: false }).limit(20).then(function (r) {
+      state.payments = r.error ? [] : (r.data || []);
+      renderPayments();
+    }, function () { state.payments = []; renderPayments(); });
+  }
+  function payAmount(p) {
+    if (p.kind === 'subscription') return money(p.amount_cents) + ' per month' + (p.setup_fee_cents > 0 ? ' + ' + money(p.setup_fee_cents) + ' one-time setup' : '');
+    return money(p.amount_cents) + ' one-time';
+  }
+  function payBadge(p) {
+    if (p.status === 'pending') return '<span class="pill warn">Awaiting payment</span>';
+    if (p.status === 'paid') return '<span class="pill pass">Paid' + (p.paid_at ? ' ' + esc(fmtDay(p.paid_at)) : '') + '</span>';
+    if (p.status === 'active') return '<span class="pill pass">Active</span>';
+    if (p.status === 'past_due') return '<span class="pill fail">Payment problem</span>';
+    return '<span class="pill">Cancelled</span>';
+  }
+  function payDetail(p) {
+    if (p.kind !== 'subscription' || !p.current_period_end) return '';
+    if (p.status === 'active') return p.cancel_at_period_end ? 'Ends on ' + fmtDay(p.current_period_end) + '.' : 'Next payment on ' + fmtDay(p.current_period_end) + '.';
+    if (p.status === 'past_due') return 'Your last payment did not go through. Please update your card.';
+    return '';
+  }
+  function renderPayments() {
+    var card = $('#payments'), list = state.payments || [];
+    card.hidden = !PAYMENTS_ON || !list.length;
+    $('#payList').innerHTML = list.map(function (p) {
+      var action = p.status === 'pending' ? '<button class="btn btn-primary btn-sm" type="button" data-pay="checkout" data-id="' + esc(p.id) + '">Pay now</button>'
+        : (p.kind === 'subscription' && (p.status === 'active' || p.status === 'past_due')) ? '<button class="btn btn-ghost btn-sm" type="button" data-pay="portal">Manage billing</button>' : '';
+      var detail = payDetail(p);
+      return '<li><div class="pay-main"><strong>' + esc(p.description) + '</strong><span class="muted">' + esc(payAmount(p)) + '</span>' +
+        (detail ? '<span class="muted small">' + esc(detail) + '</span>' : '') + '</div><div class="pay-side">' + payBadge(p) + action + '</div></li>';
+    }).join('');
+  }
+  // Ask a payments function for a Stripe-hosted page and go there. Only Stripe addresses are followed.
+  function goToStripe(fn, body, btn) {
+    var status = $('#payStatus');
+    say(status, '');
+    busy(btn, true, 'Opening Stripe...');
+    sb.functions.invoke(fn, { body: body || {} }).then(function (r) {
+      if (r.error) {
+        var ctx = r.error.context;
+        if (ctx && typeof ctx.json === 'function') {
+          return ctx.json().then(function (j) { throw new Error(j && j.error && j.error !== 'payments_not_configured' ? j.error : PAY_UNAVAILABLE); }, function () { throw new Error(PAY_UNAVAILABLE); });
+        }
+        throw new Error('We could not reach the payment service. Please try again.');
+      }
+      var url = r.data && r.data.url;
+      if (typeof url !== 'string' || !/^https:\/\/(checkout|billing)\.stripe\.com\//.test(url)) throw new Error('We could not start the payment. Please try again.');
+      window.location.assign(url);
+    }).catch(function (err) {
+      busy(btn, false);
+      say(status, err.message || 'We could not start the payment. Please try again.', 'error');
+    });
+  }
+  $('#payList').addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-pay]'); if (!b) return;
+    if (b.dataset.pay === 'checkout') goToStripe('create-checkout-session', { payment_request_id: b.dataset.id }, b);
+    else goToStripe('create-portal-session', {}, b);
+  });
+  // Coming back from Stripe: the webhook records the payment a few seconds later, so check again for a short while
+  function handlePaymentReturn() {
+    if (!PAYMENTS_ON) return;
+    var q = new URLSearchParams(window.location.search), result = q.get('payment');
+    if (result !== 'success' && result !== 'cancelled') return;
+    try { window.history.replaceState(null, '', window.location.pathname + window.location.hash); } catch (e) { /* ignore */ }
+    var status = $('#payStatus');
+    if (result === 'cancelled') { say(status, 'Payment cancelled. Nothing was charged. You can pay any time from here.'); return; }
+    say(status, 'Thank you. We are confirming your payment now...', 'ok');
+    var tries = 0, timer = window.setInterval(function () {
+      tries++;
+      loadPayments().then(function () {
+        if (!(state.payments || []).some(function (p) { return p.status === 'pending'; })) { window.clearInterval(timer); say(status, 'Payment received. Thank you!', 'ok'); loadActivity(); }
+        else if (tries >= 12) { window.clearInterval(timer); say(status, 'Your payment is still being confirmed. It will show here shortly.', 'ok'); }
+      });
+    }, 3000);
+    var card = $('#payments'); if (card && card.scrollIntoView) card.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
 
   // First visit: scan the website they gave us in the pop-up straight away
   function maybeFirstScan() {

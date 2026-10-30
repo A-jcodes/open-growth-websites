@@ -171,6 +171,14 @@
         </div>
       </div>
 
+      <!-- Payment requests from Open Growth. Hidden until payments are switched on and there is something to show. -->
+      <div class="glass pay-card" id="payments" hidden>
+        <p class="card-label">Payments</p>
+        <p class="muted small">Pay securely through Stripe. Your card details go straight to Stripe and never touch our website.</p>
+        <ul class="pay-list" id="payList"></ul>
+        <p class="form-status" id="payStatus" role="status" aria-live="polite"></p>
+      </div>
+
       <div class="glass chat-card" id="messages">
         <div class="chat-head">
           <div>
@@ -308,6 +316,7 @@
   </main>
 
   <script src="../shared/supabase-config.js"></script>
+  <script src="../shared/payments-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <script src="account.js"></script>
