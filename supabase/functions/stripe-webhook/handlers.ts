@@ -21,7 +21,9 @@ export type PaymentRequest = {
   stripe_subscription_id: string | null;
 };
 
-export interface Repo {
+import { isPremiumObject, premiumCheckoutCompleted, syncPremium, type PlanRepo } from './plan.ts';
+
+export interface Repo extends PlanRepo {
   getRequest(id: string): Promise<PaymentRequest | null>;
   getRequestBySubscription(subscriptionId: string): Promise<PaymentRequest | null>;
   getStripeCustomerId(userId: string): Promise<string | null>;
@@ -79,6 +81,10 @@ export async function handleEvent(event: any, d: Deps): Promise<{ outcome: strin
   switch (event.type) {
     case 'checkout.session.completed':
     case 'checkout.session.async_payment_succeeded':
+      if (isPremiumObject(obj)) {
+        if (obj?.payment_status === 'unpaid') return { outcome: 'awaiting_payment', requestId: null };
+        return premiumResult(await premiumCheckoutCompleted(obj, d));
+      }
       return checkoutPaid(obj, d);
     case 'checkout.session.async_payment_failed':
       return checkoutFailed(obj, d);
@@ -86,17 +92,25 @@ export async function handleEvent(event: any, d: Deps): Promise<{ outcome: strin
     case 'invoice.payment_failed': {
       const subId = invoiceSubscriptionId(obj);
       if (!subId) return { outcome: 'ignored_no_subscription', requestId: null };
-      return syncSubscription(subId, d, { renewalInvoice: event.type === 'invoice.paid' && obj?.billing_reason === 'subscription_cycle' });
+      return routeSubscription(subId, d, { renewalInvoice: event.type === 'invoice.paid' && obj?.billing_reason === 'subscription_cycle' });
     }
     case 'customer.subscription.created':
     case 'customer.subscription.updated':
     case 'customer.subscription.deleted': {
       const subId = idOf(obj);
-      return subId ? syncSubscription(subId, d, {}) : { outcome: 'ignored_no_subscription', requestId: null };
+      return subId ? routeSubscription(subId, d, {}) : { outcome: 'ignored_no_subscription', requestId: null };
     }
     default:
       return { outcome: 'ignored', requestId: null };
   }
+}
+
+// Premium plan subscriptions (metadata.plan = 'premium') go to plan.ts; payment-request subscriptions stay on the old path.
+const premiumResult = (r: { outcome: string; userId: string | null }) => ({ outcome: r.outcome, requestId: null as string | null });
+async function routeSubscription(subId: string, d: Deps, opts: { renewalInvoice?: boolean }) {
+  const sub = await d.stripe.subscriptions.retrieve(subId);
+  if (isPremiumObject(sub)) return premiumResult(await syncPremium(subId, d));
+  return syncSubscription(subId, d, opts);
 }
 
 async function checkoutPaid(session: any, d: Deps) {

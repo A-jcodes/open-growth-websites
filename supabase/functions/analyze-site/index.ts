@@ -1,10 +1,12 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { parse } from 'npm:node-html-parser@6';
+import { scanLimitFor } from './limits.ts';
 
 // Scans a customer's website for on-page SEO, technical and local-SEO signals,
 // adds Google PageSpeed results, scores it, and saves the scan for the signed-in user.
 // Safety: needs a signed-in user, blocks private network addresses (SSRF),
-// caps page size and time, and limits each user to 10 scans per hour.
+// caps page size and time, and limits each user per hour: 10 on Standard, 30 on Premium (the plan is read from the
+// database with the service role, never from the request).
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -13,7 +15,6 @@ const CORS = {
 };
 const MAX_HTML = 1_500_000;
 const MAX_REDIRECTS = 4;
-const SCANS_PER_HOUR = 10;
 const UA = 'OpenGrowthSiteCheck/1.0 (+https://open-growth-websites.vercel.app)';
 
 function json(body: unknown, status = 200) {
@@ -246,7 +247,9 @@ Deno.serve(async (req: Request) => {
 
   const since = new Date(Date.now() - 3600_000).toISOString();
   const { count } = await admin.from('site_scans').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('created_at', since);
-  if ((count ?? 0) >= SCANS_PER_HOUR) return json({ error: 'You have reached the limit of 10 scans per hour. Try again later.' }, 429);
+  const { data: prof } = await admin.from('profiles').select('plan').eq('id', user.id).maybeSingle();
+  const limit = scanLimitFor(prof?.plan); // any lookup problem falls back to the Standard limit
+  if ((count ?? 0) >= limit) return json({ error: `You have reached the limit of ${limit} scans per hour. Try again later.` }, 429);
 
   try {
     const { res, finalUrl } = await safeFetch(target.toString());

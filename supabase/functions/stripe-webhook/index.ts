@@ -8,7 +8,8 @@ import { processEvent, type PaymentRequest, type Repo } from './handlers.ts';
 // Optional: RESEND_API_KEY + NOTIFY_EMAIL (already set for notify-team) for "payment received" alerts to the team,
 // NOTIFY_FROM, SITE_URL. STRIPE_ALLOW_LIVE=true is the single switch that would ever permit live mode; leave it unset.
 // Events handled: checkout.session.completed / async_payment_succeeded / async_payment_failed, invoice.paid,
-// invoice.payment_failed, customer.subscription.created / updated / deleted. Everything else is acknowledged and ignored.
+// invoice.payment_failed, customer.subscription.created / updated / deleted. Subscriptions with metadata.plan = 'premium'
+// set profiles.plan (see plan.ts). Everything else is acknowledged and ignored.
 
 const API_VERSION = '2026-10-28.endive'; // pinned: the SDK and the shapes read in handlers.ts were written against this
 const allowLive = Deno.env.get('STRIPE_ALLOW_LIVE') === 'true';
@@ -43,6 +44,15 @@ function makeRepo(db: ReturnType<typeof createClient>): Repo {
     },
     async addActivity(userId, title, body) {
       const { error } = await db.from('activity_feed').insert({ user_id: userId, title, body });
+      if (error) throw error;
+    },
+    async getProfilePlan(userId) {
+      const { data, error } = await db.from('profiles').select('plan,plan_status').eq('id', userId).maybeSingle();
+      if (error) throw error;
+      return data as { plan: 'standard' | 'premium'; plan_status: string | null } | null;
+    },
+    async setPlan(userId, patch) {
+      const { error } = await db.from('profiles').update(patch).eq('id', userId);
       if (error) throw error;
     },
     async claimEvent(id, type) {
