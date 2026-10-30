@@ -1,3 +1,4 @@
+-- Migration 1 of 10 (applied as create_leads_table). The full ordered list is in supabase/README.md.
 -- Open Growth lead capture table.
 -- Run this once in the Supabase dashboard: SQL Editor > New query > paste > Run.
 

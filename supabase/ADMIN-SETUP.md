@@ -31,3 +31,15 @@ The `notify-team` function emails you when a customer sends a message, requests 
 3. Nothing else to do. Each alert is sent once.
 
 Until the secrets are set, the admin screen still shows an unread count and a pop-up when you are logged in.
+
+The same two secrets also power the **payment alerts**: the Stripe webhook emails you when a payment arrives, a customer upgrades to or leaves Premium, a monthly payment fails, or a payment does not match your records.
+
+## 3. Day-to-day use
+
+- **Messages:** open a customer, read their thread (it marks their messages read), reply with Ctrl+Enter.
+- **Work and updates:** the Work and Updates tabs control what the customer sees on their dashboard.
+- **Quotes and leads:** the Quotes and Leads buttons on the left list everyone. Set a quote's status (new, contacted, quoted, won, lost).
+- **Payments:** with payments switched on (`shared/payments-config.js`), each customer has a **Payments** tab to request a one-time or monthly payment. Premium customers show a badge and sort first among unread. See [`../docs/stripe-integration-plan.md`](../docs/stripe-integration-plan.md).
+- **Staff list:** add or remove staff only in the database, as in step 1. Customers cannot make themselves staff.
+
+See [`README.md`](README.md) for the migrations, functions and the full list of secrets.
