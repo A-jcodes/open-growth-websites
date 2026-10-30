@@ -1,0 +1,13 @@
+{
+  "name": "og-stripe-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node rls.test.mjs && node --conditions=deno sig.test.mjs && node handlers.test.mjs",
+    "test:params": "node params.test.mjs spec3.sdk.json"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.3.0",
+    "stripe": "23.1.0"
+  }
+}
