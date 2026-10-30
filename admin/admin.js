@@ -75,9 +75,28 @@
   sb.auth.getSession().then(function (r) { if (!(r.data && r.data.session)) show('viewLogin'); });
 
   /* ---------- data ---------- */
+  // Profiles with the plan columns (migration 004). Before that migration is applied the extra columns do not exist and the
+  // query errors, so fall back to the original column list: the screen then simply shows no Premium badges.
+  var PROFILE_COLS = 'id,email,full_name,business_name,website_url,revenue_range,biggest_problem,created_at';
+  var PLAN_COLS = ',plan,plan_status,plan_renews_at,plan_cancel_at_period_end';
+  var planCols = true;
+  function loadProfiles() {
+    var q = function (cols) { return sb.from('profiles').select(cols).order('created_at', { ascending: false }).limit(500); };
+    if (!planCols) return q(PROFILE_COLS);
+    return q(PROFILE_COLS + PLAN_COLS).then(function (r) {
+      if (r.error) { planCols = false; return q(PROFILE_COLS); }
+      return r;
+    });
+  }
+  function isPremium(c) { return !!c && c.plan === 'premium'; }
+  function planChip(c) {
+    if (!isPremium(c)) return '';
+    var due = c.plan_status === 'past_due';
+    return '<span class="plan-chip' + (due ? ' past_due' : '') + '" title="' + (due ? 'Premium, payment failed' : 'Premium customer: reply first') + '">&#9733; Premium' + (due ? ' (payment failed)' : '') + '</span>';
+  }
   function refreshAll() {
     return Promise.all([
-      sb.from('profiles').select('id,email,full_name,business_name,website_url,revenue_range,biggest_problem,created_at').order('created_at', { ascending: false }).limit(500),
+      loadProfiles(),
       sb.from('messages').select('id,user_id,sender,body,created_at,team_read_at').order('created_at', { ascending: false }).limit(1000),
       sb.from('quote_requests').select('id,user_id,services,budget,timeline,notes,status,created_at').order('created_at', { ascending: false }).limit(300),
       sb.from('leads').select('id,created_at,name,email,revenue_range,biggest_problem,source,offer,crm_synced_at,crm_error').order('created_at', { ascending: false }).limit(300)
@@ -155,13 +174,15 @@
     }).sort(function (a, b) {
       var ea = S.idx[a.id] || {}, eb = S.idx[b.id] || {};
       if ((eb.unread > 0) !== (ea.unread > 0)) return eb.unread > 0 ? 1 : -1;
+      // priority replies: among customers waiting on a reply, Premium comes first
+      if (ea.unread > 0 && isPremium(a) !== isPremium(b)) return isPremium(a) ? -1 : 1;
       var ta = ea.last ? ea.last.created_at : a.created_at, tb = eb.last ? eb.last.created_at : b.created_at;
       return ta < tb ? 1 : -1;
     });
     $('#custList').innerHTML = rows.length ? rows.map(function (c) {
       var e = S.idx[c.id] || {}, last = e.last;
       return '<li><button type="button" class="cust-item ' + (S.selected === c.id ? 'is-active' : '') + '" data-id="' + esc(c.id) + '">' +
-        '<span class="cust-top"><strong>' + esc(nameOf(c)) + '</strong>' + (e.unread ? '<span class="count">' + e.unread + '</span>' : '') + '</span>' +
+        '<span class="cust-top"><strong>' + esc(nameOf(c)) + '</strong>' + planChip(c) + (e.unread ? '<span class="count">' + e.unread + '</span>' : '') + '</span>' +
         '<span class="muted small">' + esc(c.business_name || c.email || '') + '</span>' +
         '<span class="cust-snip">' + (last ? esc((last.sender === 'team' ? 'You: ' : '') + last.body.slice(0, 70)) : 'No messages yet') + '</span></button></li>';
     }).join('') : '<li class="muted small" style="padding:12px">No customers yet.</li>';
@@ -183,6 +204,7 @@
     var c = cust(S.selected); if (!c) return;
     $('#cdName').textContent = nameOf(c);
     $('#cdBiz').textContent = c.business_name || '';
+    $('#cdPlan').innerHTML = planChip(c);
     var site = safeUrl(c.website_url);
     var rows = [
       ['Email', c.email ? '<a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>' : '-'],

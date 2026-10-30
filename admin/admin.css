@@ -13,6 +13,9 @@
 .count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; background: var(--pink); color: #12020d; }
 .adm-nav-btn.is-active .count { background: #0a0916; color: var(--text); }
 .count[hidden] { display: none; }
+.plan-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.04em; padding: 2px 9px; border-radius: 999px; color: #1a1030; background: linear-gradient(100deg, #8f6bff, #c06bd8 50%, #f5b942); box-shadow: 0 0 12px rgba(176, 107, 216, 0.4); white-space: nowrap; }
+.plan-chip.past_due { box-shadow: 0 0 0 2px rgba(255, 122, 138, 0.7); }
+#cdPlan { vertical-align: middle; margin-left: 6px; }
 #sideList { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
 .adm-search input { width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line-2); background: rgba(6, 6, 11, 0.6); color: inherit; font: inherit; }
 .adm-search input:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(143, 123, 255, 0.2); }
