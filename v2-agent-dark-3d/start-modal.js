@@ -197,7 +197,7 @@
     };
     if (typeof window.confetti === 'function') { fire(); return; }
     var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
+    s.src = '../shared/vendor/confetti.browser.min.js';
     s.onload = fire;
     document.head.appendChild(s);
   }
