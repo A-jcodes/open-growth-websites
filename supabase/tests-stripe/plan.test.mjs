@@ -41,7 +41,12 @@ function world() {
     getRequest: async () => null, getRequestBySubscription: async () => null, updateRequest: async () => {},
     getStripeCustomerId: async () => w.customer,
     getProfilePlan: async (id) => (id === U ? { plan: w.profile.plan, plan_status: w.profile.plan_status } : null),
-    setPlan: async (id, patch) => { assert.equal(id, U); Object.assign(w.profile, patch); },
+    setPlan: async (id, patch, expected) => {
+      assert.equal(id, U);
+      if (w.profile.plan !== expected.plan || (w.profile.plan_status ?? null) !== (expected.plan_status ?? null)) return false; // someone else changed it first
+      Object.assign(w.profile, patch);
+      return true;
+    },
     addActivity: async (u, t) => { w.activity.push(t); },
     claimEvent: async (id, type) => { const e = w.events[id]; if (!e) { w.events[id] = { type }; return 'new'; } return e.done ? 'done' : 'retry'; },
     finishEvent: async (id, outcome) => { w.events[id].done = true; w.events[id].outcome = outcome; },
@@ -125,3 +130,22 @@ for (const [st, want] of [['unpaid', 'standard'], ['incomplete_expired', 'standa
   assert.equal(w.activity.length, 1);
 }
 console.log('premium plan tests passed');
+
+// ---- three events for the same upgrade arriving at the same instant must announce it exactly once ----
+{
+  const w = world(); w.subs.sub_p = sub('active');
+  // Real database calls take time. Return the value read BEFORE a short pause, so all three events see "standard"
+  // before any of them has written, which is exactly what happened in production.
+  const realGet = w.repo.getProfilePlan;
+  w.repo.getProfilePlan = async (id) => { const v = await realGet(id); await new Promise((r) => setTimeout(r, 15)); return v; };
+  const outcomes = await Promise.all([
+    processEvent(ev('evt_r1', 'checkout.session.completed', session()), w.deps),
+    processEvent(ev('evt_r2', 'customer.subscription.created', { id: 'sub_p' }), w.deps),
+    processEvent(ev('evt_r3', 'invoice.paid', { id: 'in_1', billing_reason: 'subscription_create', parent: { subscription_details: { subscription: 'sub_p' } } }), w.deps),
+  ]);
+  assert.equal(w.profile.plan, 'premium'); assert.equal(w.profile.plan_status, 'active');
+  assert.equal(outcomes.filter((o) => o === 'premium_started').length, 1, 'only one event announces the upgrade: ' + outcomes.join(','));
+  assert.equal(w.activity.filter((t) => t === 'Welcome to Premium').length, 1, 'one welcome message');
+  assert.equal(w.alerts.filter((a) => a === 'Customer upgraded to Premium').length, 1, 'one team alert');
+}
+console.log('simultaneous events announce once');

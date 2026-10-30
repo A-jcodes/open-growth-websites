@@ -51,9 +51,13 @@ function makeRepo(db: ReturnType<typeof createClient>): Repo {
       if (error) throw error;
       return data as { plan: 'standard' | 'premium'; plan_status: string | null } | null;
     },
-    async setPlan(userId, patch) {
-      const { error } = await db.from('profiles').update(patch).eq('id', userId);
+    async setPlan(userId, patch, expected) {
+      // Only update if the plan and status are still what the caller read: a second simultaneous event updates 0 rows
+      let q = db.from('profiles').update(patch).eq('id', userId).eq('plan', expected.plan);
+      q = expected.plan_status === null ? q.is('plan_status', null) : q.eq('plan_status', expected.plan_status);
+      const { data, error } = await q.select('id');
       if (error) throw error;
+      return Boolean(data && data.length);
     },
     async claimEvent(id, type) {
       const { data, error } = await db.from('payment_events').upsert({ id, type }, { onConflict: 'id', ignoreDuplicates: true }).select('id');

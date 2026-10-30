@@ -9,7 +9,9 @@ export type PlanPatch = { plan: 'standard' | 'premium'; plan_status: string; pla
 
 export interface PlanRepo {
   getProfilePlan(userId: string): Promise<ProfilePlan | null>;
-  setPlan(userId: string, patch: PlanPatch): Promise<void>;
+  /** Compare-and-set: write the patch only if the profile still has the plan and status we read (`expected`).
+   *  Returns true when the row was changed. This is what stops two simultaneous events announcing the same upgrade. */
+  setPlan(userId: string, patch: PlanPatch, expected: ProfilePlan): Promise<boolean>;
   getStripeCustomerId(userId: string): Promise<string | null>;
   addActivity(userId: string, title: string, body: string): Promise<void>;
 }
@@ -67,13 +69,22 @@ export async function syncPremium(subId: string, d: PlanDeps, hint?: { userId?: 
     return { outcome: 'mismatch', userId };
   }
 
-  const before = await d.repo.getProfilePlan(userId);
-  if (!before) return { outcome: 'unknown_user', userId };
-  await d.repo.setPlan(userId, {
+  const patch: PlanPatch = {
     ...next,
     plan_renews_at: next.plan === 'premium' ? periodEndOf(sub) : null,
     plan_cancel_at_period_end: next.plan === 'premium' ? Boolean(sub.cancel_at_period_end || sub.cancel_at) : false,
-  });
+  };
+  // Stripe often sends several events in the same instant. Each one reads the profile, then tries a compare-and-set.
+  // Only the one that actually changes the plan wins and announces it; a loser re-reads and finds nothing left to announce.
+  let before = await d.repo.getProfilePlan(userId);
+  if (!before) return { outcome: 'unknown_user', userId };
+  let won = await d.repo.setPlan(userId, patch, before);
+  for (let attempt = 0; !won && attempt < 3; attempt++) {
+    before = await d.repo.getProfilePlan(userId);
+    if (!before) return { outcome: 'unknown_user', userId };
+    won = await d.repo.setPlan(userId, patch, before);
+  }
+  if (!won) throw new Error('plan changed repeatedly'); // Stripe will retry the event
 
   if (before.plan === 'standard' && next.plan === 'premium') {
     await d.repo.addActivity(userId, 'Welcome to Premium', 'Your Premium plan is active: priority replies, 30 scans per hour and your full scan history. Thank you!');
