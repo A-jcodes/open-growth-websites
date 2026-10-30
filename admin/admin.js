@@ -27,7 +27,7 @@
   }
   var sb = window.supabase.createClient(cfg.url, cfg.anonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
 
-  var S = { user: null, customers: [], msgs: [], quotes: [], leads: [], idx: {}, view: 'customers', selected: null, tab: 'messages', work: [], updates: [], scans: [], unreadTotal: -1, timer: null };
+  var S = { user: null, customers: [], msgs: [], quotes: [], leads: [], idx: {}, view: 'customers', selected: null, tab: 'messages', work: [], updates: [], scans: [], payments: [], payErr: false, unreadTotal: -1, timer: null };
   var VIEWS = ['viewLoading', 'viewLogin', 'viewDenied', 'viewAdmin'];
   function show(id) {
     VIEWS.forEach(function (v) { $('#' + v).hidden = v !== id; });
@@ -176,7 +176,7 @@
     $('#noSelection').hidden = true; $('#custDetail').hidden = false;
     renderList(); renderHead();
     $$('#cdTabs .chipbtn').forEach(function (x) { x.classList.toggle('is-active', x.dataset.tab === 'messages'); });
-    loadDetail(id).then(renderTab);
+    loadDetail(id).then(function () { return loadPayments(id); }).then(renderTab);
     renderTab();
   }
   function renderHead() {
@@ -213,6 +213,7 @@
     else if (t === 'work') el.innerHTML = tabWork();
     else if (t === 'updates') el.innerHTML = tabUpdates();
     else if (t === 'scans') el.innerHTML = tabScans();
+    else if (t === 'payments') el.innerHTML = tabPayments();
     else if (t === 'quotes') el.innerHTML = tabQuotes(S.quotes.filter(function (q) { return q.user_id === S.selected; }), false);
     if (t === 'messages') { var log = $('#chatLog', el); if (log) log.scrollTop = log.scrollHeight; markRead(); }
   }
@@ -262,6 +263,44 @@
       '<div class="cat-line">' + ['seo', 'technical', 'local', 'speed'].map(function (k) { return '<span class="pill">' + esc(k) + ': ' + (cs[k] == null ? '-' : esc(cs[k])) + '</span>'; }).join('') + '</div>' +
       '<p class="card-label" style="margin-top:16px">Biggest gaps</p><ul class="gap-list">' + (issues.map(function (c) { return '<li><span class="pill ' + esc(c.status) + '">' + esc(c.status === 'fail' ? 'Fix now' : 'Improve') + '</span> <strong>' + esc(c.title) + '</strong><span class="muted small"> ' + esc(c.fix) + '</span></li>'; }).join('') || '<li class="muted">Nothing outstanding.</li>') + '</ul></div>' +
       '<h2 class="h3 sec-title">All scans</h2><ul class="scan-list">' + S.scans.map(function (s) { return '<li><div class="scan-item" style="cursor:default"><span class="scan-score ' + band(s.score || 0) + '">' + esc(s.score) + '</span><span class="scan-url">' + esc(s.url) + '</span><span class="muted small">' + esc(fmt(s.created_at)) + '</span></div></li>'; }).join('') + '</ul>';
+  }
+  /* ---------- payments (Stripe) ----------
+     Off until shared/payments-config.js says enabled. Staff only choose who, what and how much; the customer pays on
+     Stripe's page, and only the webhook can mark a request paid. Row level security enforces all of this, not this page. */
+  var PAYMENTS_ON = !!(window.OG_PAYMENTS && window.OG_PAYMENTS.enabled === true);
+  if (PAYMENTS_ON) $('#payTabBtn').hidden = false;
+  var PAY_COLS = 'id,user_id,description,kind,amount_cents,setup_fee_cents,status,paid_at,current_period_end,created_at';
+  function money(cents) { return '$' + (cents / 100).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' CAD'; }
+  function toCents(v) {
+    var s = String(v == null ? '' : v).trim().replace(/[$,\s]/g, '');
+    if (!/^\d+(\.\d{1,2})?$/.test(s)) return NaN;
+    return Math.round(parseFloat(s) * 100);
+  }
+  function loadPayments(uid) {
+    if (!PAYMENTS_ON) return Promise.resolve();
+    return sb.from('payment_requests').select(PAY_COLS).eq('user_id', uid).order('created_at', { ascending: false }).limit(50).then(function (r) {
+      if (uid !== S.selected) return;
+      S.payErr = !!r.error; S.payments = r.error ? [] : (r.data || []);
+    }, function () { S.payErr = true; S.payments = []; });
+  }
+  var PAY_STATUS = { pending: ['warn', 'Awaiting payment'], paid: ['pass', 'Paid'], active: ['pass', 'Active plan'], past_due: ['fail', 'Payment problem'], canceled: ['', 'Cancelled'], void: ['', 'Withdrawn'] };
+  function tabPayments() {
+    if (!PAYMENTS_ON) return '<div class="glass adm-empty"><p class="muted">Online payments are not switched on yet.</p></div>';
+    if (S.payErr) return '<div class="glass adm-empty"><p class="muted">Payments are not available yet. The payments database setup has not been applied.</p></div>';
+    var rows = S.payments.map(function (p) {
+      var st = PAY_STATUS[p.status] || ['', p.status];
+      var amt = p.kind === 'subscription' ? money(p.amount_cents) + ' per month' + (p.setup_fee_cents > 0 ? ' + ' + money(p.setup_fee_cents) + ' setup' : '') : money(p.amount_cents) + ' one-time';
+      return '<li class="glass pay-row"><div><strong>' + esc(p.description) + '</strong><p class="muted small">' + esc(amt) + ' &middot; ' + esc(fmt(p.created_at)) + '</p></div><div class="w-actions"><span class="pill ' + esc(st[0]) + '">' + esc(st[1]) + '</span>' +
+        (p.status === 'pending' ? '<button class="btn btn-ghost btn-sm" type="button" data-action="pay-void" data-id="' + esc(p.id) + '">Withdraw</button>' : '') + '</div></li>';
+    }).join('');
+    return '<form class="w-item glass pay-form" data-form="pay-add" novalidate><h2 class="h3">Request a payment</h2>' +
+      '<div class="w-row"><label>What is it for<input name="description" maxlength="200" placeholder="e.g. Launch website, 50% deposit" /></label>' +
+      '<label>Type<select name="kind"><option value="one_time">One-time</option><option value="subscription">Monthly plan</option></select></label>' +
+      '<label>Amount (CAD)<input name="amount" inputmode="decimal" placeholder="1500.00" /></label></div>' +
+      '<div class="w-row"><label>One-time setup fee (monthly plans only, CAD)<input name="setup" inputmode="decimal" placeholder="0.00" /></label></div>' +
+      '<p class="muted small pay-note">The customer sees this in their Payments section and pays through Stripe. Tax is handled in Stripe settings.</p>' +
+      '<div class="w-actions"><button class="btn btn-primary btn-sm" type="submit">Send payment request</button></div></form><p class="form-status" id="payStatus" role="status" aria-live="polite"></p>' +
+      '<ul class="u-list">' + (rows || '<li class="muted">No payment requests yet.</li>') + '</ul>';
   }
   var QSTAT = ['new', 'contacted', 'quoted', 'won', 'lost'];
   function qStatusSelect(cur, id) {
@@ -323,6 +362,19 @@
         if (r.error) { status('workStatus', 'Could not save. Please try again.', 'error'); return; }
         return loadDetail(uid).then(function () { renderTab(); status('workStatus', kind === 'work-add' ? 'Step added.' : 'Saved.', 'ok'); });
       });
+    } else if (kind === 'pay-add') {
+      var pf = new FormData(f), desc = String(pf.get('description') || '').trim(), pk = String(pf.get('kind')) === 'subscription' ? 'subscription' : 'one_time';
+      var amt = toCents(pf.get('amount')), setup = String(pf.get('setup') || '').trim() ? toCents(pf.get('setup')) : 0;
+      if (desc.length < 3) { status('payStatus', 'Describe what the payment is for.', 'error'); return; }
+      if (!(amt >= 50 && amt <= 10000000)) { status('payStatus', 'Enter an amount between 0.50 and 100,000.00.', 'error'); return; }
+      if (isNaN(setup) || setup < 0 || setup > 10000000 || (pk === 'one_time' && setup > 0)) { status('payStatus', pk === 'one_time' ? 'A setup fee only applies to monthly plans.' : 'Enter a valid setup fee.', 'error'); return; }
+      if (!window.confirm('Send a request for ' + money(amt) + (pk === 'subscription' ? ' per month' : '') + (setup ? ' plus ' + money(setup) + ' setup' : '') + ' to this customer?')) return;
+      var sbtn = f.querySelector('button[type=submit]'); sbtn.disabled = true;
+      sb.from('payment_requests').insert({ user_id: uid, description: desc, kind: pk, amount_cents: amt, setup_fee_cents: setup }).then(function (r) {
+        sbtn.disabled = false;
+        if (r.error) { status('payStatus', 'Could not create the request. Payments may not be set up yet.', 'error'); return; }
+        return loadPayments(uid).then(function () { renderTab(); status('payStatus', 'Request sent. The customer sees it on their dashboard.', 'ok'); });
+      });
     } else if (kind === 'upd-add') {
       var u = new FormData(f), t = String(u.get('title') || '').trim();
       if (!t) { status('updStatus', 'Give the update a title.', 'error'); return; }
@@ -337,6 +389,7 @@
     var a = b.dataset.action, id = b.dataset.id;
     if (a === 'work-del') { if (!window.confirm('Delete this step?')) return; sb.from('work_items').delete().eq('id', id).then(function () { loadDetail(S.selected).then(renderTab); }); }
     else if (a === 'upd-del') { if (!window.confirm('Delete this update?')) return; sb.from('activity_feed').delete().eq('id', id).then(function () { loadDetail(S.selected).then(renderTab); }); }
+    else if (a === 'pay-void') { if (!window.confirm('Withdraw this payment request? The customer will no longer be able to pay it.')) return; sb.from('payment_requests').update({ status: 'void' }).eq('id', id).eq('status', 'pending').then(function (r) { if (r.error) { toast('Could not withdraw it.'); return; } loadPayments(S.selected).then(renderTab); }); }
     else if (a === 'open-cust') { e.preventDefault(); setView('customers'); selectCustomer(id); }
   });
   document.addEventListener('change', function (e) {

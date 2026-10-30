@@ -67,3 +67,10 @@
   .cust-list { max-height: 260px; }
   .w-row { grid-template-columns: 1fr; }
 }
+
+/* Payments tab */
+.pay-form .w-row { grid-template-columns: 2fr 1fr 1fr; }
+.pay-form label { display: grid; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+.pay-note { margin: 8px 0 0; }
+.pay-row { padding: 16px 18px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; }
+@media (max-width: 980px) { .pay-form .w-row { grid-template-columns: 1fr; } }
