@@ -24,12 +24,26 @@ await db.exec(`
   create policy "Own activity: read" on public.activity_feed for select to authenticated using (user_id = (select auth.uid()));
   grant select on public.activity_feed to authenticated;
 `);
+// profiles as it exists live (read from pg_policies / column_privileges): own-row read, staff read, UPDATE only on three columns
+await db.exec(`
+  create table public.profiles (id uuid primary key references auth.users (id), email text, full_name text, business_name text, website_url text,
+    revenue_range text, biggest_problem text, team_notified_at timestamptz, created_at timestamptz not null default now());
+  alter table public.profiles enable row level security;
+  revoke all on public.profiles from anon, authenticated;
+  grant select on public.profiles to authenticated;
+  grant update (business_name, full_name, website_url) on public.profiles to authenticated;
+  grant select, insert, update on public.profiles to service_role;
+  create policy "Own profile: read" on public.profiles for select to authenticated using (id = (select auth.uid()));
+  create policy "Own profile: update" on public.profiles for update to authenticated using (id = (select auth.uid())) with check (id = (select auth.uid()));
+  create policy "Staff: read profiles" on public.profiles for select to authenticated using ((select public.is_admin()));
+`);
 const staff = '00000000-0000-0000-0000-00000000000a', cust1 = '00000000-0000-0000-0000-0000000000c1', cust2 = '00000000-0000-0000-0000-0000000000c2';
 await db.exec(`insert into auth.users values ('${staff}','s@x'),('${cust1}','c1@x'),('${cust2}','c2@x'); insert into public.admins (user_id) values ('${staff}');`);
 
-for (const f of ['001_payments_tables.sql', '002_payments_policies.sql', '003_payment_request_activity.sql']) await db.exec(fs.readFileSync(new URL(f, dir), 'utf8'));
+await db.exec(`insert into public.profiles (id, email, business_name) select id, email, 'Biz' from auth.users`);
+for (const f of ['001_payments_tables.sql', '002_payments_policies.sql', '003_payment_request_activity.sql', '004_premium_plan.sql']) await db.exec(fs.readFileSync(new URL(f, dir), 'utf8'));
 // applying twice must be harmless (idempotent migrations)
-for (const f of ['001_payments_tables.sql', '002_payments_policies.sql', '003_payment_request_activity.sql']) await db.exec(fs.readFileSync(new URL(f, dir), 'utf8'));
+for (const f of ['001_payments_tables.sql', '002_payments_policies.sql', '003_payment_request_activity.sql', '004_premium_plan.sql']) await db.exec(fs.readFileSync(new URL(f, dir), 'utf8'));
 
 async function as(role, sub, sql, params) {
   await db.exec(`set role ${role}; select set_config('request.jwt.sub', '${sub || ''}', false);`);
@@ -87,7 +101,35 @@ await db.exec(`insert into public.payment_events (id, type) values ('evt_1','inv
 assert.equal((await db.query(`select count(*)::int c from public.payment_events`)).rows[0].c, 1);
 // service role path (bypassrls) can write money state
 await as('service_role', '', `update public.payment_requests set stripe_subscription_id='sub_1', status='active' where user_id=$1`, [cust1]);
+// ---- Premium plan columns (migration 004) ----
+// existing rows default to standard
+assert.deepEqual((await db.query(`select distinct plan, plan_status, plan_cancel_at_period_end from public.profiles`)).rows, [{ plan: 'standard', plan_status: null, plan_cancel_at_period_end: false }]);
+// a customer cannot upgrade themselves, through any plan column, even on their own row
+for (const col of ["plan = 'premium'", "plan_status = 'active'", "plan_renews_at = now()", "plan_cancel_at_period_end = true"]) {
+  await fails(as('authenticated', cust1, `update public.profiles set ${col} where id = $1`, [cust1]), 'customer writes ' + col);
+  await fails(as('authenticated', staff, `update public.profiles set ${col} where id = $1`, [cust1]), 'staff browser writes ' + col);
+}
+await fails(as('anon', '', `update public.profiles set plan = 'premium'`), 'anon writes plan');
+await fails(as('authenticated', cust1, `insert into public.profiles (id, plan) values (gen_random_uuid(), 'premium')`), 'customer inserts premium profile');
+// the allowed columns still work (Standard keeps what it has)
+assert.equal((await as('authenticated', cust1, `update public.profiles set business_name = 'New name' where id = $1 returning id`, [cust1])).rows.length, 1);
+// the plan check constraint rejects junk even from the service role
+await fails(as('service_role', '', `update public.profiles set plan = 'gold' where id = $1`, [cust1]), 'bad plan value');
+// the service role (the webhook) can set the plan
+await as('service_role', '', `update public.profiles set plan = 'premium', plan_status = 'active', plan_renews_at = now() where id = $1`, [cust1]);
+// customers read their own plan, never another customer's; staff read all
+const own = await as('authenticated', cust1, `select id, plan, plan_status, plan_renews_at, plan_cancel_at_period_end from public.profiles`);
+assert.equal(own.rows.length, 1); assert.equal(own.rows[0].plan, 'premium');
+assert.equal((await as('authenticated', cust2, `select plan from public.profiles where id = $1`, [cust1])).rows.length, 0, 'cust2 must not see cust1 plan');
+assert.equal((await as('authenticated', cust2, `select plan from public.profiles`)).rows[0].plan, 'standard');
+const staffSees = await as('authenticated', staff, `select id, plan from public.profiles order by plan asc`);
+assert.equal(staffSees.rows.length, 3); assert.equal(staffSees.rows[0].plan, 'premium');
+await fails(as('anon', '', `select plan from public.profiles`), 'anon reads plan');
+
 // rollback script works
 await db.exec(fs.readFileSync(new URL('rollback-payments.sql', dir), 'utf8'));
 assert.equal((await db.query(`select to_regclass('public.payment_requests') r`)).rows[0].r, null);
+// premium rollback removes only the plan columns
+await db.exec(fs.readFileSync(new URL('rollback-premium.sql', dir), 'utf8'));
+assert.equal((await db.query(`select count(*)::int c from information_schema.columns where table_name='profiles' and column_name like 'plan%'`)).rows[0].c, 0);
 console.log('RLS / grants / migration checks passed');

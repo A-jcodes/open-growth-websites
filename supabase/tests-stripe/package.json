@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node rls.test.mjs && node --conditions=deno sig.test.mjs && node handlers.test.mjs",
+    "test": "node rls.test.mjs && node --conditions=deno sig.test.mjs && node handlers.test.mjs && node plan.test.mjs",
     "test:params": "node params.test.mjs spec3.sdk.json"
   },
   "devDependencies": {
